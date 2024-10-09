@@ -4,7 +4,7 @@ Attention : Il vous faut PHP 8.2 pour faire fonctionner ce projet si vous avez P
 
 ## Initialisation de votre IDE
 
-### PHPStorme
+### PHPStorm
 
 1. Ouvrir le projet dans PHPStorm
 2. Installer les extensions Twig et Symfony
