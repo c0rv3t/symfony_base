@@ -32,6 +32,10 @@ class Product
     #[ORM\Column(enumType: ProductStatus::class)]
     private ?ProductStatus $status = null;
 
+    #[ORM\ManyToOne(inversedBy: 'products')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Category $category = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -122,6 +126,18 @@ class Product
     public function setStatus(ProductStatus $status): static
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): static
+    {
+        $this->category = $category;
 
         return $this;
     }
