@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -27,6 +29,20 @@ class User
 
     #[ORM\Column]
     private ?bool $roles = null;
+
+    /**
+     * @var Collection<int, Order>
+     */
+    #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'user')]
+    private Collection $order1;
+
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    private ?Address $address = null;
+
+    public function __construct()
+    {
+        $this->order1 = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -89,6 +105,45 @@ class User
     public function setRoles(bool $roles): static
     {
         $this->roles = $roles;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Order>
+     */
+    public function getOrder1(): Collection
+    {
+        return $this->order1;
+    }
+
+    public function addOrder1(Order $order1): static
+    {
+        if (!$this->order1->contains($order1)) {
+            $this->order1->add($order1);
+            $order1->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrder1(Order $order1): static
+    {
+        if ($this->order1->removeElement($order1) || ($order1->getUser() === $this)) {
+            $order1->setUser(null);
+        }
+
+        return $this;
+    }
+
+    public function getAddress(): ?Address
+    {
+        return $this->address;
+    }
+
+    public function setAddress(?Address $address): static
+    {
+        $this->address = $address;
 
         return $this;
     }
