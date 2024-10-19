@@ -19,9 +19,14 @@ class ImageFixture extends Fixture
         $image2->setUrl("/img/M&Ms.png");
         $manager->persist($image2);
 
+        $image3 = new Image();
+        $image3->setUrl("/img/Seringue.jpg");
+        $manager->persist($image3);
+
         $manager->flush();
 
         $this->addReference(self::IMAGE_REFERENCE . "_1", $image1);
         $this->addReference(self::IMAGE_REFERENCE . "_2", $image2);
+        $this->addReference(self::IMAGE_REFERENCE . "_3", $image3);
     }
 }

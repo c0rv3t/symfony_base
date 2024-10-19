@@ -21,13 +21,13 @@ class Order
     #[ORM\Column(enumType: OrderStatus::class)]
     private ?OrderStatus $status = null;
 
-    #[ORM\ManyToOne(inversedBy: 'order1')]
+    #[ORM\ManyToOne(inversedBy: 'anOrder')]
     private ?User $user = null;
 
     /**
      * @var Collection<int, OrderItem>
      */
-    #[ORM\OneToMany(targetEntity: OrderItem::class, mappedBy: 'order1')]
+    #[ORM\OneToMany(targetEntity: OrderItem::class, mappedBy: 'anOrder')]
     private Collection $orderItem;
 
     #[ORM\Column(length: 255)]
@@ -89,7 +89,7 @@ class Order
     {
         if (!$this->orderItem->contains($orderItem)) {
             $this->orderItem->add($orderItem);
-            $orderItem->setOrder1($this);
+            $orderItem->setAnOrder($this);
         }
 
         return $this;
@@ -97,8 +97,8 @@ class Order
 
     public function removeOrderItem(OrderItem $orderItem): static
     {
-        if ($this->orderItem->removeElement($orderItem) || ($orderItem->getOrder1() === $this)) {
-            $orderItem->setOrder1(null);
+        if ($this->orderItem->removeElement($orderItem) || ($orderItem->getAnOrder() === $this)) {
+            $orderItem->setAnOrder(null);
         }
 
         return $this;

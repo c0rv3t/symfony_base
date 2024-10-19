@@ -15,7 +15,7 @@ class UserFixture extends Fixture implements DependentFixtureInterface
         $user1 = new User();
         $user1->setEmail("thomas.ducret2@etu.univ-lorraine.fr");
         $user1->setFirstName("Thomas");
-        $user1->setLastName("DUCRET");
+        $user1->setLastName("Ducret");
         $user1->setRoles(true);
         $user1->setPassword("ThomasPassword??");
         $user1->setAddress($this->getReference(AddressFixture::ADDRESS_REFERENCE . "_1"));
@@ -49,15 +49,21 @@ class UserFixture extends Fixture implements DependentFixtureInterface
         $manager->persist($user4);
 
         $user5 = new User();
-        $user5->setEmail("arthur.ducret@greg.com");
+        $user5->setEmail("arthur.ducret@email.com");
         $user5->setFirstName("Arthur");
-        $user5->setLastName("DUCRET");
+        $user5->setLastName("Ducret");
         $user5->setRoles(true);
         $user5->setPassword("vraimentMonFrr1!");
         $user5->setAddress($this->getReference(AddressFixture::ADDRESS_REFERENCE . "_1"));
         $manager->persist($user5);
 
         $manager->flush();
+
+        $this->addReference(self::USER_REFERENCE . "_1", $user1);
+        $this->addReference(self::USER_REFERENCE . "_2", $user2);
+        $this->addReference(self::USER_REFERENCE . "_3", $user3);
+        $this->addReference(self::USER_REFERENCE . "_4", $user4);
+        $this->addReference(self::USER_REFERENCE . "_5", $user5);
     }
 
     public function getDependencies(): array {

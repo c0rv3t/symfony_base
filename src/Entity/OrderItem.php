@@ -28,7 +28,7 @@ class OrderItem
     private Collection $products;
 
     #[ORM\ManyToOne(inversedBy: 'orderItem')]
-    private ?Order $order1 = null;
+    private ?Order $anOrder = null;
 
     public function __construct()
     {
@@ -97,14 +97,14 @@ class OrderItem
         return $this;
     }
 
-    public function getOrder1(): ?Order
+    public function getAnOrder(): ?Order
     {
-        return $this->order1;
+        return $this->anOrder;
     }
 
-    public function setOrder1(?Order $order1): static
+    public function setAnOrder(?Order $anOrder): static
     {
-        $this->order1 = $order1;
+        $this->anOrder = $anOrder;
 
         return $this;
     }
