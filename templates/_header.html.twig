@@ -1,0 +1,22 @@
+<nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+    <div class="container-fluid">
+        <img class="navbar-brand" href="{{ path('home') }}" src="{{ asset('img/green.png') }}" alt="" style="max-width:30px;">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarColor01">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="{{ path('home') }}">Home</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown">{{ "navbar.langue" | trans }}</a>
+                    <div class="dropdown-menu">
+                        <img class="navbar-brand" src="{{ asset('img/green.png') }}" alt="Français" style="max-width:30px;">
+                        <img class="navbar-brand" src="{{ asset('img/green.png') }}" alt="Anglais" style="max-width:30px;">
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

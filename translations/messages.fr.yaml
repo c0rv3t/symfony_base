@@ -1,0 +1,8 @@
+base:
+  test: Ceci est le message par défault car je n'ai pas set mon body
+
+home:
+  title: Accueil
+
+navbar:
+  langue: Language

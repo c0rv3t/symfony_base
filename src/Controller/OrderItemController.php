@@ -6,11 +6,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-class HomeController extends AbstractController
+class OrderItemController extends AbstractController
 {
-    #[Route('/', name: 'home')]
+    #[Route('/order/item', name: 'app_order_item')]
     public function index(): Response
     {
-        return $this->render('home.html.twig');
+        return $this->render('order_item/index.html.twig', [
+            'controller_name' => 'OrderItemController',
+        ]);
     }
 }
