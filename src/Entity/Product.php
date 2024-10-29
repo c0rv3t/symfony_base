@@ -106,12 +106,10 @@ class Product
 
     public function setImage(?Image $image): static
     {
-        // unset the owning side of the relation if necessary
         if ($image === null && $this->image !== null) {
             $this->image->setProduct(null);
         }
 
-        // set the owning side of the relation if necessary
         if ($image !== null && $image->getProduct() !== $this) {
             $image->setProduct($this);
         }

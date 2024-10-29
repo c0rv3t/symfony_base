@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ "title.product" | trans }}{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <div class="row">
+        {% for product in products %}
+            <div class="col-12 col-md-6 col-xl-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <img src="{{ asset(product.image.url) }}" class="card-img-top" alt="{{ product.name }}">
+                        <h3 class="card-title text-center my-4">{{ product.name }}</h3>
+                        <p class="card-text">{{ "product.price" | trans}}: {{ product.price }} €</p>
+                        <p class="card-text">{{ "product.description" | trans}}: {{ product.description }}</p>
+                        <p class="card-text">{{ "product.stock" | trans}}: {{ product.stock }}</p>
+                        {# <p class="card-text">{{ "product.status" | trans}}: {{ product.status ? 'Available' : 'Out of Stock' }}</p> #}
+                        <p class="card-text">{{ "category" | trans}}: {{ product.category.description }}</p>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <p>No products found.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

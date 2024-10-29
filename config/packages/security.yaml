@@ -1,7 +1,8 @@
 security:
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
-        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+        App\Entity\User:
+            algorithm: auto
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
         users_in_memory: { memory: null }
@@ -22,8 +23,8 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN } 1
-        # - { path: ^/profile, roles: ROLE_USER } 0
+        # - { path: ^/admin, roles: ROLE_ADMIN }
+        # - { path: ^/, roles: ROLE_USER }
 
 when@test:
     security:

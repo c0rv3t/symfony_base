@@ -1,8 +1,22 @@
-base:
-  test: Ceci est le message par défault car je n'ai pas set mon body
-
-home:
-  title: Accueil
+title:
+  product: Liste des produits
 
 navbar:
-  langue: Language
+  home: Accueil
+  products: Produits
+  register: S'inscrire
+  langue: Français
+  langue2: English
+
+base:
+  test: Ceci est le message par défaut car je n'ai pas set mon body
+
+register: Inscription
+
+product:
+  price: Prix
+  description: Description
+  stock: Stock
+  status: Status
+
+category: Catégorie
