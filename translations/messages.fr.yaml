@@ -1,22 +1,43 @@
 title:
+  login: Connexion
   product: Liste des produits
+  add: Ajouter
+  edit: Modifier
 
 navbar:
   home: Accueil
+  dashboard: Tableau de bord
+  admin: Nos utilisateurs
+  orders: Nos commandes
   products: Produits
   register: S'inscrire
+  login: Connexion
+  logout: Se déconnecter
   langue: Français
   langue2: English
 
 base:
   test: Ceci est le message par défaut car je n'ai pas set mon body
 
-register: Inscription
+login:
+  log: Connexion
+  email: Email
+  password: Mot de passe
+
+register:
+  registration: Inscription
+  first_name: Prénom
+  last_name: Nom
+  email: Email
+  password: Mot de passe
 
 product:
   price: Prix
   description: Description
   stock: Stock
   status: Status
-
-category: Catégorie
+  add: Ajouter
+  add_product: Ajouter un produit
+  edit: Modifier
+  delete: Supprimer
+  cancel: Annuler

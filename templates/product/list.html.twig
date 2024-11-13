@@ -4,18 +4,29 @@
 
 {% block body %}
 <div class="container my-5">
+    {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('product_add') }}" class="btn btn-primary mb-4">Add Product</a>
+    {% endif %}
     <div class="row">
         {% for product in products %}
             <div class="col-12 col-md-6 col-xl-4 mb-4">
                 <div class="card">
                     <div class="card-body">
-                        <img src="{{ asset(product.image.url) }}" class="card-img-top" alt="{{ product.name }}">
+                        {% if product.image %}
+                            <img src="{{ asset(product.image.url) }}" class="card-img-top" alt="{{ product.name }}">
+                        {% else %}
+                            <img src="{{ asset('/img/default.png') }}" class="card-img-top" alt="Default Image">
+                        {% endif %}
                         <h3 class="card-title text-center my-4">{{ product.name }}</h3>
                         <p class="card-text">{{ "product.price" | trans}}: {{ product.price }} €</p>
                         <p class="card-text">{{ "product.description" | trans}}: {{ product.description }}</p>
                         <p class="card-text">{{ "product.stock" | trans}}: {{ product.stock }}</p>
-                        {# <p class="card-text">{{ "product.status" | trans}}: {{ product.status ? 'Available' : 'Out of Stock' }}</p> #}
-                        <p class="card-text">{{ "category" | trans}}: {{ product.category.description }}</p>
+                        <p class="card-text">{{ "product.status" | trans}}: {{ product.status.toString() }}</p>
+
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('product_edit', { id: product.id }) }}" class="btn btn-warning">{{ 'product.edit' | trans }}</a>
+                            <button class="btn btn-danger" onclick="confirmDeletion(`{{ product.name }}`, `{{ path('product_delete', {'id': product.id}) }}`)">{{ 'product.delete' | trans }}</button>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -24,4 +35,13 @@
         {% endfor %}
     </div>
 </div>
+<script>
+    function confirmDeletion(productName, deleteUrl) {
+        const confirmation = confirm(`Are you sure you want to delete "${productName}"?`);
+        
+        if (confirmation) {
+            window.location.href = deleteUrl;
+        }
+    }
+</script>
 {% endblock %}

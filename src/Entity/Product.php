@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Enum\ProductStatus;
 use App\Repository\ProductRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
@@ -34,10 +36,20 @@ class Product
 
     #[ORM\ManyToOne(inversedBy: 'products')]
     #[ORM\JoinColumn(nullable: false)]
+
     private ?Category $category = null;
 
-    #[ORM\ManyToOne(inversedBy: 'products')]
-    private ?OrderItem $orderItem = null;
+    /**
+     * @var Collection<int, OrderItem>
+     */
+    #[ORM\OneToMany(targetEntity: OrderItem::class, mappedBy: 'product')]
+    #[ORM\JoinColumn(nullable: true)]
+    private Collection $orderItem;
+    
+    public function __construct()
+    {
+        $this->orderItem = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -95,6 +107,7 @@ class Product
     public function setStock(int $stock): static
     {
         $this->stock = $stock;
+        $this->checkStockStatus();
 
         return $this;
     }
@@ -143,15 +156,41 @@ class Product
         return $this;
     }
 
-    public function getOrderItem(): ?OrderItem
+    /**
+     * @return Collection<int, OrderItem>
+     */
+    public function getOrderItems(): Collection
     {
         return $this->orderItem;
     }
 
-    public function setOrderItem(?OrderItem $orderItem): static
+    public function addOrderItem(OrderItem $orderItem): static
     {
-        $this->orderItem = $orderItem;
+        if (!$this->orderItem->contains($orderItem)) {
+            $this->orderItem->add($orderItem);
+            $orderItem->setProduct($this);
+        }
 
         return $this;
+    }
+
+    public function removeOrderItem(OrderItem $orderItem): static
+    {
+        if ($this->orderItem->removeElement($orderItem)) {
+            if ($orderItem->getProduct() === $this) {
+                $orderItem->setProduct(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function checkStockStatus(): void
+    {
+        if ($this->stock === 0) {
+            $this->status = ProductStatus::Out;
+        } elseif ($this->status === ProductStatus::Out && $this->stock > 0) {
+            $this->status = ProductStatus::Available;
+        }
     }
 }

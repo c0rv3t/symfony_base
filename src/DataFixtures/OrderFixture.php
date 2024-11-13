@@ -16,7 +16,7 @@ class OrderFixture extends Fixture implements DependentFixtureInterface
         $order1 = new Order();
         $order1->setReference("ORD-001");
         $order1->setCreatedAt(new \DateTime("2024/10/14"));
-        $order1->setStatus(OrderStatus::Preparation);
+        $order1->setStatus(OrderStatus::Pending);
         $order1->setUser($this->getReference(UserFixture::USER_REFERENCE . "_1"));
         $order1->addOrderItem($this->getReference(OrderItemFixture::ORDERITEM_REFERENCE . "_1"));
         $manager->persist($order1);
@@ -24,15 +24,15 @@ class OrderFixture extends Fixture implements DependentFixtureInterface
         $order2 = new Order();
         $order2->setReference("ORD-002");
         $order2->setCreatedAt(new \DateTime("2024/09/17"));
-        $order2->setStatus(OrderStatus::Annulee);
+        $order2->setStatus(OrderStatus::Canceled);
         $order2->setUser($this->getReference(UserFixture::USER_REFERENCE . "_5"));
-        $order2->addOrderItem($this->getReference(OrderItemFixture::ORDERITEM_REFERENCE . "_1"));
+        $order2->addOrderItem($this->getReference(OrderItemFixture::ORDERITEM_REFERENCE . "_2"));
         $manager->persist($order2);
 
         $order3 = new Order();
         $order3->setReference("ORD-003");
         $order3->setCreatedAt(new \DateTime("2024/08/28"));
-        $order3->setStatus(OrderStatus::Preparation);
+        $order3->setStatus(OrderStatus::Pending);
         $order3->setUser($this->getReference(UserFixture::USER_REFERENCE . "_3"));
         $order3->addOrderItem($this->getReference(OrderItemFixture::ORDERITEM_REFERENCE . "_1"));
         $manager->persist($order3);

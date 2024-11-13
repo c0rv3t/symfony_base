@@ -1,22 +1,43 @@
 <nav class="navbar navbar-expand-md bg-primary" data-bs-theme="dark">
     <div class="container-fluid">
         <a href="{{ path('home') }}">
-            <img class="navbar-brand" src="{{ asset('img/MyGainzLogo.png') }}" alt="" style="max-width:50px;">
+            <img class="navbar-brand" src="{{ asset('img/OurGainzLogo.png') }}" alt="" style="max-width:50px;">
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarExpander" aria-controls="navbarExpander" aria-expanded="false" aria-label="Toggle navigation">
             <img src="{{ asset('img/hamburger-menu.png')}}" style="max-width:30px;" alt="Menu">
         </button>
-        <div class="collapse navbar-collapse" id="navbarColor01">
+        <div class="collapse navbar-collapse" id="navbarExpander">
             <ul class="navbar-nav me-auto align-items-center">
                 <li class="nav-item">
                     <a class="nav-link" href="{{ path('home') }}">{{ "navbar.home" | trans }}</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ path('product_list') }}">{{ "navbar.products" | trans }}</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ path('app_register') }}">{{ "navbar.register" | trans }}</a>
-                </li>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button">Admin panel</a>
+                        <div class="dropdown-menu bg-primary" style="border: 1px solid white">
+                            <a class="nav-link" href="{{ path('admin_dashboard') }}">{{ "navbar.dashboard" | trans }}</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="nav-link" href="{{ path('admin_users') }}">{{ "navbar.admin" | trans }}</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="nav-link" href="{{ path('admin_orders') }}">{{ "navbar.orders" | trans }}</a>
+                        </div>
+                    </li>
+                {% endif %}
+                {% if app.user %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('product_list') }}">{{ "navbar.products" | trans }}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('logout') }}">{{ "navbar.logout" | trans }}</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('register') }}">{{ "navbar.register" | trans }}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('login') }}">{{ "navbar.login" | trans }}</a>
+                    </li>
+                {% endif %}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
                         <img src="{{ app.request.locale == 'en' ? asset('img/english.png') : asset('img/français.png') }}" alt='{{ "navbar.langue" | trans }}' style="width: 40px;">

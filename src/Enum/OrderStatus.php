@@ -4,8 +4,17 @@ namespace App\Enum;
 
 enum OrderStatus: string
 {
-    case Preparation = "En préparation";
-    case Expediee = "Expediée";
-    case Livree = "Livrée";
-    case Annulee = "Annulée";
+    case Pending = "Pending";
+    case Shipped = "Shipped";
+    case Delivered = "Delivered";
+    case Canceled = "Canceled";
+
+    public function toString(): string{
+        return match($this){
+            self::Pending=>"Pending",
+            self::Shipped=>"Shipped",
+            self::Delivered=>"Delivered",
+            self::Canceled=>"Canceled"
+        };
+    }
 }

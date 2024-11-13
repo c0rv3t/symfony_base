@@ -38,7 +38,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var Collection<int, Order>
      */
     #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'user')]
-    private Collection $order1;
+    private Collection $anOrder;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
     private ?Address $address = null;
@@ -48,7 +48,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function __construct()
     {
-        $this->order1 = new ArrayCollection();
+        $this->anOrder = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -124,25 +124,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Collection<int, Order>
      */
-    public function getOrder1(): Collection
+    public function getAnOrder(): Collection
     {
-        return $this->order1;
+        return $this->anOrder;
     }
 
-    public function addOrder1(Order $order1): static
+    public function addAnOrder(Order $anOrder): static
     {
-        if (!$this->order1->contains($order1)) {
-            $this->order1->add($order1);
-            $order1->setUser($this);
+        if (!$this->anOrder->contains($anOrder)) {
+            $this->anOrder->add($anOrder);
+            $anOrder->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeOrder1(Order $order1): static
+    public function removeAnOrder(Order $anOrder): static
     {
-        if ($this->order1->removeElement($order1) || ($order1->getUser() === $this)) {
-            $order1->setUser(null);
+        if ($this->anOrder->removeElement($anOrder) || ($anOrder->getUser() === $this)) {
+            $anOrder->setUser(null);
         }
 
         return $this;

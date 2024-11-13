@@ -3,8 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\OrderItemRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: OrderItemRepository::class)]
@@ -21,19 +19,11 @@ class OrderItem
     #[ORM\Column]
     private ?float $productPrice = null;
 
-    /**
-     * @var Collection<int, Product>
-     */
-    #[ORM\OneToMany(targetEntity: Product::class, mappedBy: 'orderItem')]
-    private Collection $products;
+    #[ORM\ManyToOne(inversedBy: 'orderItem')]
+    private ?Product $product = null;
 
     #[ORM\ManyToOne(inversedBy: 'orderItem')]
     private ?Order $anOrder = null;
-
-    public function __construct()
-    {
-        $this->products = new ArrayCollection();
-    }
 
     public function getId(): ?int
     {
@@ -70,33 +60,6 @@ class OrderItem
         return $this;
     }
 
-    /**
-     * @return Collection<int, Product>
-     */
-    public function getProducts(): Collection
-    {
-        return $this->products;
-    }
-
-    public function addProduct(Product $product): static
-    {
-        if (!$this->products->contains($product)) {
-            $this->products->add($product);
-            $product->setOrderItem($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProduct(Product $product): static
-    {
-        if ($this->products->removeElement($product) || ($product->getOrderItem() === $this)) {
-            $product->setOrderItem(null);
-        }
-
-        return $this;
-    }
-
     public function getAnOrder(): ?Order
     {
         return $this->anOrder;
@@ -105,6 +68,18 @@ class OrderItem
     public function setAnOrder(?Order $anOrder): static
     {
         $this->anOrder = $anOrder;
+
+        return $this;
+    }
+    
+    public function getProduct(): ?Product
+    {
+        return $this->product;
+    }
+
+    public function setProduct(?Product $product): static
+    {
+        $this->product = $product;
 
         return $this;
     }

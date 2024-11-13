@@ -1,22 +1,43 @@
 title:
   product: Products list
+  login: Login
+  add: Add
+  edit: Edit
 
 navbar:
   home: Home
+  dashboard: Dashboard
+  admin: Users list
+  orders: Orders list
   products: Products
   register: Register
+  login: Login
+  logout: Log Out
   langue: English
   langue2: Français
 
 base:
   test: Dimitri Dimitrious was here
 
-register: Register
+login:
+  log: Login
+  email: Email
+  password: Password
+
+register: 
+  registration: Registration
+  first_name: First Name
+  last_name: Last Name
+  email: Email
+  password: Password
 
 product:
   price: Price
   description: Description
   stock: Stock
   status: Status
-
-category: Category
+  add: Add
+  add_product: Add a product
+  edit: Edit
+  delete: Delete
+  cancel: Cancel

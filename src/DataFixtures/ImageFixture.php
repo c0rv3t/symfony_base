@@ -12,15 +12,15 @@ class ImageFixture extends Fixture
     public function load(ObjectManager $manager): void
     {
         $image1 = new Image();
-        $image1->setUrl("/img/Protein.webp");
+        $image1->setUrl("/img/product/Protein.webp");
         $manager->persist($image1);
 
         $image2 = new Image();
-        $image2->setUrl("/img/M&Ms.png");
+        $image2->setUrl("/img/product/M&Ms.png");
         $manager->persist($image2);
 
         $image3 = new Image();
-        $image3->setUrl("/img/Seringue.jpg");
+        $image3->setUrl("/img/product/Seringue.jpg");
         $manager->persist($image3);
 
         $manager->flush();

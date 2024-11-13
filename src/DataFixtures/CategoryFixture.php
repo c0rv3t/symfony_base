@@ -12,16 +12,26 @@ class CategoryFixture extends Fixture
     public function load(ObjectManager $manager): void
     {
         $category1 = new Category();
-        $category1->setDescription("Suppléments");
+        $category1->setDescription("Supplements");
         $manager->persist($category1);
 
         $category2 = new Category();
-        $category2->setDescription("Autres");
+        $category2->setDescription("Sports equipment");
         $manager->persist($category2);
+
+        $category3 = new Category();
+        $category3->setDescription("Valuables");
+        $manager->persist($category3);
+
+        $category4 = new Category();
+        $category4->setDescription("Others");
+        $manager->persist($category4);
 
         $manager->flush();
 
         $this->addReference(self::CATEGORY_REFERENCE . "_1", $category1);
         $this->addReference(self::CATEGORY_REFERENCE . "_2", $category2);
+        $this->addReference(self::CATEGORY_REFERENCE . "_3", $category3);
+        $this->addReference(self::CATEGORY_REFERENCE . "_4", $category4);
     }
 }

@@ -10,6 +10,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class ProductFixture extends Fixture implements DependentFixtureInterface
 {
+    public const PRODUCT_REFERENCE = "Product";
     public function load(ObjectManager $manager): void
     {
         $product1 = new Product();
@@ -17,7 +18,7 @@ class ProductFixture extends Fixture implements DependentFixtureInterface
         $product1->setPrice(12.99);
         $product1->setDescription("Un classique");
         $product1->setStock(24);
-        $product1->setStatus(ProductStatus::Disponible);
+        $product1->setStatus(ProductStatus::Available);
         $product1->setCategory($this->getReference(CategoryFixture::CATEGORY_REFERENCE . "_1"));
         $product1->setImage($this->getReference(ImageFixture::IMAGE_REFERENCE . "_1"));
         $manager->persist($product1);
@@ -27,7 +28,7 @@ class ProductFixture extends Fixture implements DependentFixtureInterface
         $product2->setPrice(6.99);
         $product2->setDescription("Prot de wish");
         $product2->setStock(12);
-        $product2->setStatus(ProductStatus::Disponible);
+        $product2->setStatus(ProductStatus::Preorder);
         $product2->setCategory($this->getReference(CategoryFixture::CATEGORY_REFERENCE . "_1"));
         $product2->setImage($this->getReference(ImageFixture::IMAGE_REFERENCE . "_2"));
         $manager->persist($product2);
@@ -36,13 +37,17 @@ class ProductFixture extends Fixture implements DependentFixtureInterface
         $product3->setName("Seringue usagée");
         $product3->setPrice(1280.00);
         $product3->setDescription("Seringue usagée de Ronnie Coleman datant de 1987");
-        $product3->setStock(1);
-        $product3->setStatus(ProductStatus::Disponible);
-        $product3->setCategory($this->getReference(CategoryFixture::CATEGORY_REFERENCE . "_1"));
+        $product3->setStock(0);
+        $product3->setStatus(ProductStatus::Out);
+        $product3->setCategory($this->getReference(CategoryFixture::CATEGORY_REFERENCE . "_3"));
         $product3->setImage($this->getReference(ImageFixture::IMAGE_REFERENCE . "_3"));
         $manager->persist($product3);
 
         $manager->flush();
+
+        $this->addReference(self::PRODUCT_REFERENCE . "_1", $product1);
+        $this->addReference(self::PRODUCT_REFERENCE . "_2", $product2);
+        $this->addReference(self::PRODUCT_REFERENCE . "_3", $product3);
     }
     public function getDependencies(): array {
         return [
