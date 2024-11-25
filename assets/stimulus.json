@@ -1,0 +1,8 @@
+{
+    "controllers": {
+        "cart": {
+            "enabled": true,
+            "src": "./controllers/cart_controller"
+        }
+    }
+}

@@ -24,8 +24,16 @@ class CategoryFixture extends Fixture
         $manager->persist($category3);
 
         $category4 = new Category();
-        $category4->setDescription("Others");
+        $category4->setDescription("Clothes");
         $manager->persist($category4);
+
+        $category5 = new Category();
+        $category5->setDescription("Shoes");
+        $manager->persist($category5);
+
+        $category6 = new Category();
+        $category6->setDescription("Other");
+        $manager->persist($category6);
 
         $manager->flush();
 
@@ -33,5 +41,7 @@ class CategoryFixture extends Fixture
         $this->addReference(self::CATEGORY_REFERENCE . "_2", $category2);
         $this->addReference(self::CATEGORY_REFERENCE . "_3", $category3);
         $this->addReference(self::CATEGORY_REFERENCE . "_4", $category4);
+        $this->addReference(self::CATEGORY_REFERENCE . "_5", $category5);
+        $this->addReference(self::CATEGORY_REFERENCE . "_6", $category6);
     }
 }

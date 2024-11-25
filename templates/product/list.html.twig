@@ -4,12 +4,58 @@
 
 {% block body %}
 <div class="container my-5">
-    {% if is_granted('ROLE_ADMIN') %}
-        <a href="{{ path('product_add') }}" class="btn btn-primary mb-4">Add Product</a>
-    {% endif %}
-    <div class="row">
-        {% for product in products %}
-            <div class="col-12 col-md-6 col-xl-4 mb-4">
+    {% for type, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ type }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    <div class="row align-self-center">
+        {% if is_granted('ROLE_ADMIN') %}
+            <div class="col-lg-4 col-xl-3">
+                <a href="{{ path('product_add') }}" class="btn btn-primary mb-4">{{ "product.add_product" | trans }}</a>
+            </div>
+            <div class="col-lg-8 col-xl-9">
+        {% else %}
+            <div class="col-12">
+        {% endif %}
+            <div>
+                <input class="mb-3 form-control" type="text" id="search" placeholder="Heavy" autocomplete="off" />
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <select class="form-select category-filter btn-primary">
+                <option value="*">All Categories</option>
+                {% set unique_categories = [] %}
+                {% for product in pagination %}
+                    {% if product.category.description not in unique_categories %}
+                        {% set unique_categories = unique_categories | merge([product.category.description]) %}
+                        <option value=".{{ product.category.description | lower | replace({' ': '-'}) }}">{{ product.category.description }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <button class="btn btn-primary filter-button" data-filter="*">All Statuses</button>
+            <button class="btn btn-primary filter-button" data-filter=".available">Available</button>
+            <button class="btn btn-primary filter-button" data-filter=".preorder">Preorder</button>
+            {% if is_granted('ROLE_ADMIN') %}
+                <button class="btn btn-primary filter-button" data-filter=".out-of-stock">Out of Stock</button>
+            {% endif %}
+        </div>
+    </div>
+
+    <div id="product-container" class="row">
+        {% for product in pagination %}
+            <div class="col-12 col-md-6 col-xl-4 mb-4 product-item {{ product.category.description | lower | replace({' ': '-'}) }} {% if product.status.toString() == 'Available' %}available{% endif %} {% if product.status.toString() == 'Preorder' %}preorder{% endif %} {% if product.status.toString() == 'Out of stock' %}out-of-stock{% endif %}" data-name="{{ product.name }}">
                 <div class="card">
                     <div class="card-body">
                         {% if product.image %}
@@ -18,29 +64,93 @@
                             <img src="{{ asset('/img/default.png') }}" class="card-img-top" alt="Default Image">
                         {% endif %}
                         <h3 class="card-title text-center my-4">{{ product.name }}</h3>
-                        <p class="card-text">{{ "product.price" | trans}}: {{ product.price }} €</p>
-                        <p class="card-text">{{ "product.description" | trans}}: {{ product.description }}</p>
-                        <p class="card-text">{{ "product.stock" | trans}}: {{ product.stock }}</p>
-                        <p class="card-text">{{ "product.status" | trans}}: {{ product.status.toString() }}</p>
+                        <p class="card-text">{{ product.price }} €</p>
+                        <p class="card-text">{{ "product.description" | trans }}: {{ product.description }}</p>
+                        <p class="card-text">{{ "product.stock" | trans }}: {{ product.stock }}</p>
+                        <p class="card-text">{{ product.category.description }}</p>
+                        <p class="card-text">{{ "product.status" | trans }}: 
+                            {% if product.status.toString() == "Available" %}
+                                {{ "product.available" | trans }}
+                            {% elseif product.status.toString() == "Preorder" %}
+                                {{ "product.preorder" | trans }}
+                            {% elseif product.status.toString() == "Out of stock" %}
+                                {{ "product.out" | trans }}
+                            {% endif %}
+                        </p>
 
                         {% if is_granted('ROLE_ADMIN') %}
-                            <a href="{{ path('product_edit', { id: product.id }) }}" class="btn btn-warning">{{ 'product.edit' | trans }}</a>
-                            <button class="btn btn-danger" onclick="confirmDeletion(`{{ product.name }}`, `{{ path('product_delete', {'id': product.id}) }}`)">{{ 'product.delete' | trans }}</button>
+                            <a class="btn btn-warning" href="{{ path('product_edit', { id: product.id }) }}">{{ 'product.edit' | trans }}</a>
+                            <a class="btn btn-danger" onclick="deleteProduct({{ product.id }}, `{{ product.name }}`, '{{ csrf_token('delete' ~ product.id) }}')">{{ 'product.delete' | trans }}</a>
+                        {% endif %}
+                        {% if product.status.toString() != "Out of stock" %}
+                            <img src="{{ asset('/img/add2Cart.png') }}" class="btn" data-action="click->cart#addToCart" data-product-id="{{ product.id }}" data-product-name="{{ product.name }}" data-product-price="{{ product.price }}" style="height:80px;">
                         {% endif %}
                     </div>
                 </div>
             </div>
         {% else %}
-            <p>No products found.</p>
+            <p>{{ "product.notFound" | trans }}</p>
         {% endfor %}
     </div>
 </div>
+
+<script src="https://unpkg.com/isotope-layout@3.0.6/dist/isotope.pkgd.min.js"></script>
 <script>
-    function confirmDeletion(productName, deleteUrl) {
-        const confirmation = confirm(`Are you sure you want to delete "${productName}"?`);
-        
-        if (confirmation) {
-            window.location.href = deleteUrl;
+    document.addEventListener('DOMContentLoaded', () => {
+        const iso = new Isotope('#product-container', {
+            itemSelector: '.product-item',
+            layoutMode: 'fitRows',
+        });
+
+        const searchInput = document.getElementById('search');
+        if (searchInput) {
+            searchInput.addEventListener('keyup', (event) => {
+                const query = event.target.value.toLowerCase();
+
+                iso.arrange({
+                    filter: function (itemElem) {
+                        const name = itemElem.getAttribute('data-name').toLowerCase();
+                        return name.includes(query);
+                    },
+                });
+            });
+        }
+
+        const categoryFilter = document.querySelector('.category-filter');
+        if (categoryFilter) {
+            categoryFilter.addEventListener('change', (event) => {
+                const filterValue = event.target.value;
+                iso.arrange({ filter: filterValue });
+            });
+        }
+
+        const filterButtons = document.querySelectorAll('.filter-button');
+        filterButtons.forEach((button) => {
+            button.addEventListener('click', (event) => {
+                const filterValue = event.target.getAttribute('data-filter');
+                iso.arrange({ filter: filterValue });
+
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                event.target.classList.add('active');
+            });
+        });
+    });
+</script>
+<script>
+    function deleteProduct(id, name, csrfToken) {
+        if (confirm(`Are you sure you want to delete ${name}?`)) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/product/delete/${id}`;
+            
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = '_token';
+            csrfInput.value = csrfToken;
+
+            form.appendChild(csrfInput);
+            document.body.appendChild(form);
+            form.submit();
         }
     }
 </script>

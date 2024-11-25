@@ -62,14 +62,20 @@ class AdminController extends AbstractController
     }
 
     #[Route('/admin/dashboard', name: 'admin_dashboard')]
-    public function dashboard(Request $request, LocaleSwitcher $localeSwitcher, CategoryRepository $categoryRepository, OrderRepository $orderRepository, ProductRepository $productRepository): Response
+    public function dashboard(Request $request, LocaleSwitcher $localeSwitcher, CategoryRepository $categoryRepository, OrderRepository $orderRepository, ProductRepository $productRepository, PaginatorInterface $paginator): Response
     {
         $locale = $request->getSession()->get('_locale', 'en');
         $localeSwitcher->setLocale($locale);
 
         $orders = $orderRepository->getOrderTotals();
 
-        $productsByCategory = $categoryRepository->getProductsCountByCategory();
+        $productsByCategoryQuery = $categoryRepository->getProductsCountByCategory();
+
+        $productsByCategory = $paginator->paginate(
+            $productsByCategoryQuery,
+            $request->query->getInt('page', 1),
+            3
+        );
 
         $latestOrders = $orderRepository->findLatestOrders(5);
 

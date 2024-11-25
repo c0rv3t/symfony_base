@@ -4,27 +4,28 @@
 
 {% block body %}
     <div class="container text-center mt-5">
-        <div class="row">
-            <div class="col-12">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-8">
                 {% if app.user %}
-                    <h2>Welcome, {{ app.user.firstName }} {{ app.user.lastName }}!</h2>
+                    <h2>{{ "home.welcome" | trans }}, {{ app.user.firstName }} {{ app.user.lastName }}!</h2>
                 {% else %}
-                    <h2>You are not logged in.</h2>
+                    <h2>{{ "home.anonymous" | trans }}</h2>
                 {% endif %}
 
                 
                 {% if is_granted('ROLE_ADMIN') %}
-                    <h4>Ratio de disponibilité des produits</h4>
+                    <h3 class="mb-5">{{ "home.admin" | trans }}</h3>
+                    <h4>{{ "home.ratio" | trans }}</h4>
                     <div class="progress my-3 rounded-pill" style="height: 30px;">
                         <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: {{ inStockPercentage }}%;" aria-valuenow="{{ inStockPercentage }}" aria-valuemin="0" aria-valuemax="100"></div>
                         <div class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" style="width: {{ outOfStockPercentage }}%;" aria-valuenow="{{ outOfStockPercentage }}" aria-valuemin="0" aria-valuemax="100"></div>
                         <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning" role="progressbar" style="width: {{ preOrderPercentage }}%;" aria-valuenow="{{ preOrderPercentage }}" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
 
-                    <div class="d-flex justify-content-around my-3 text-white">
-                        <span class="badge bg-success rounded-pill">En stock: {{ inStockPercentage | number_format(0) }}%</span>
-                        <span class="badge bg-danger rounded-pill">Rupture de stock: {{ outOfStockPercentage | number_format(0) }}%</span>
-                        <span class="badge bg-warning rounded-pill">Précommande: {{ preOrderPercentage | number_format(0) }}%</span>
+                    <div class="d-flex justify-content-center my-3 text-white">
+                        <span class="badge bg-success rounded-pill">{{ "home.available" | trans }}: {{ inStockPercentage | number_format(0) }}%</span>
+                        <span class="badge bg-danger rounded-pill mx-2 mx-md-4 mx-lg-5">{{ "home.out" | trans }}: {{ outOfStockPercentage | number_format(0) }}%</span>
+                        <span class="badge bg-warning rounded-pill">{{ "home.preorder" | trans }}: {{ preOrderPercentage | number_format(0) }}%</span>
                     </div>
                 {% endif %}
             </div>

@@ -3,18 +3,36 @@ title:
   product: Liste des produits
   add: Ajouter
   edit: Modifier
+  dashboard: Tableau de bord
+  users: Nos utilisateurs
+  orders: Nos commandes
+  cart: Votre commande
+
+home:
+  welcome: Bienvenue
+  anonymous: Vous n'êtes pas connecté
+  admin: Vous êtes admin du site OurGainz
+  ratio: Notre ratio de disponibilité des produits
+  available: Disponible
+  out: Rupture de stock
+  preorder: Precommande
 
 navbar:
   home: Accueil
+  dropdown: Administration
   dashboard: Tableau de bord
   admin: Nos utilisateurs
   orders: Nos commandes
   products: Produits
+  connect: Se connecter
   register: S'inscrire
   login: Connexion
   logout: Se déconnecter
   langue: Français
   langue2: English
+
+footer:
+  rights: Aucun droit réservé.
 
 base:
   test: Ceci est le message par défaut car je n'ai pas set mon body
@@ -32,12 +50,34 @@ register:
   password: Mot de passe
 
 product:
-  price: Prix
   description: Description
   stock: Stock
-  status: Status
+  status: Statut
   add: Ajouter
   add_product: Ajouter un produit
   edit: Modifier
   delete: Supprimer
   cancel: Annuler
+  notFound: Aucun produit n'a été trouvé
+  available: Disponible
+  preorder: Précommande
+  out: Rupture de stock
+
+users:
+  email: Mail
+  identity: Identité
+  address: Adresse
+  role: Rôle
+  admin: Administrateur
+  user: Utilisateur
+  noAddress: Aucune d'adresse renseignée
+  list: Liste des utilisateurs
+
+cart:
+  product: Produit
+  price: Prix
+  quantity: Quantité
+  total: Prix total
+  yourOrder: Votre commande
+  totalPrice: Total à payer
+  emptyCart: Votre panier est vide

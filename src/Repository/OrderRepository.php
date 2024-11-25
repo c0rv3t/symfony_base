@@ -40,10 +40,13 @@ class OrderRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('o')
             ->select('SUBSTRING(o.createdAt, 1, 7) as month, SUM(oi.productPrice * oi.quantity) as totalSales')
+            ->andWhere('o.status = :shipped OR o.status = :delivered')
             ->join('o.orderItem', 'oi')
             ->groupBy('month')
             ->orderBy('month', 'DESC')
             ->setMaxResults(12)
+            ->setParameter('shipped', 'Shipped')
+            ->setParameter('delivered', 'Delivered')
             ->getQuery()
             ->getResult();
     }

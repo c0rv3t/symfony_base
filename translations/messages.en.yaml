@@ -3,18 +3,36 @@ title:
   login: Login
   add: Add
   edit: Edit
+  dashboard: Dashboard
+  users: Users
+  orders: Orders
+  cart: Cart
+
+home:
+  welcome: Welcome
+  anonymous: You are not logged in
+  admin: You are an admin for OurGainz
+  ratio: Our products disponibility ratio
+  available: Available
+  out: Out of stock
+  preorder: Preorder
 
 navbar:
   home: Home
+  dropdown: Admin page
   dashboard: Dashboard
   admin: Users list
   orders: Orders list
   products: Products
+  connect: Connect
   register: Register
   login: Login
   logout: Log Out
   langue: English
   langue2: Français
+
+footer:
+  rights: No rights reserved.
 
 base:
   test: Dimitri Dimitrious was here
@@ -32,7 +50,6 @@ register:
   password: Password
 
 product:
-  price: Price
   description: Description
   stock: Stock
   status: Status
@@ -41,3 +58,26 @@ product:
   edit: Edit
   delete: Delete
   cancel: Cancel
+  notFound: No products found
+  available: Available
+  preorder: Preorder
+  out: Out of stock
+
+users:
+  email: Email
+  identity: Identity
+  address: Address
+  role: Role
+  admin: Admin
+  user: User
+  noAddress: No address available
+  list: List of users
+
+cart:
+  product: Product
+  price: Price
+  quantity: Quantity
+  total: Total
+  yourOrder: Your order
+  totalPrice: Your Total
+  emptyCart: Your cart is empty

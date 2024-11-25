@@ -13,8 +13,8 @@
                 </li>
                 {% if is_granted('ROLE_ADMIN') %}
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button">Admin panel</a>
-                        <div class="dropdown-menu bg-primary" style="border: 1px solid white">
+                        <a class="nav-link dropdown-toggle text-center" data-bs-toggle="dropdown" role="button">{{ "navbar.dropdown" | trans }}</a>
+                        <div class="dropdown-menu bg-primary text-center" style="border: 1px solid white">
                             <a class="nav-link" href="{{ path('admin_dashboard') }}">{{ "navbar.dashboard" | trans }}</a>
                             <div class="dropdown-divider"></div>
                             <a class="nav-link" href="{{ path('admin_users') }}">{{ "navbar.admin" | trans }}</a>
@@ -30,12 +30,19 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ path('logout') }}">{{ "navbar.logout" | trans }}</a>
                     </li>
-                {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ path('register') }}">{{ "navbar.register" | trans }}</a>
+                    <li class="nav-item d-md-none">
+                        <a class="nav-link" href="{{ path('cart_view') }}">
+                            <img src="{{ asset('img/cart.png') }}" alt="Cart" style="width: 40px;">
+                        </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ path('login') }}">{{ "navbar.login" | trans }}</a>
+                {% else %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-center" data-bs-toggle="dropdown" role="button">{{ "navbar.connect" | trans }}</a>
+                        <div class="dropdown-menu bg-primary text-center" style="border: 1px solid white">
+                            <a class="nav-link" href="{{ path('login') }}">{{ "navbar.login" | trans }}</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="nav-link" href="{{ path('register') }}">{{ "navbar.register" | trans }}</a>
+                        </div>
                     </li>
                 {% endif %}
                 <li class="nav-item dropdown">
@@ -59,6 +66,22 @@
                     </ul>
                 </li>
             </ul>
+        </div>
+        <div class="d-none d-md-block">
+            {% if app.user %}
+                <ul class="navbar-nav">
+                    <li class="navbar-nav me-auto align-items-end">
+                        <a class="nav-link d-flex" href="{{ path('cart_view') }}">
+                            <img src="{{ asset('img/cart.png') }}" alt="Cart" style="width: 40px;">
+                            <div class="position-absolute" style="right: 35px;">
+                                <span class="badge bg-danger rounded-pill">
+                                    0
+                                </span>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            {% endif %}
         </div>
     </div>
 </nav>

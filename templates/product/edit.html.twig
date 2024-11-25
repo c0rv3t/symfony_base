@@ -11,10 +11,10 @@
                 <div class="card-body">
                     {{ form_start(form) }}
                         {{ form_widget(form) }}
-                            <div class="my-3">
-                                <button type="submit" class="btn btn-primary">{{ 'product.edit' | trans }}</button>
-                                <a href="{{ path('product_list') }}" class="btn btn-warning">{{ 'product.cancel' | trans }}</a>
-                            </div>
+                        <div class="my-3">
+                            <button type="submit" class="btn btn-primary">{{ 'product.edit' | trans }}</button>
+                            <a href="{{ path('product_list') }}" class="btn btn-warning">{{ 'product.cancel' | trans }}</a>
+                        </div>
                     {{ form_end(form) }}
                 </div>
             </div>

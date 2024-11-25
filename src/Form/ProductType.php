@@ -53,6 +53,7 @@ class ProductType extends AbstractType
                 'choice_label' => 'description',
             ])
             ->add('imageFile', FileType::class, [
+                'attr' => ['class' => 'custom-file'],
                 'label' => 'Product Image',
                 'mapped' => false,
                 'required' => false,
