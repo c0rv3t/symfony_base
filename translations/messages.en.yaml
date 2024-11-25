@@ -78,6 +78,8 @@ cart:
   price: Price
   quantity: Quantity
   total: Total
+  delete: Delete
   yourOrder: Your order
   totalPrice: Your Total
-  emptyCart: Your cart is empty
+  emptyOrder: You currently have no pending order
+  toOrder: To see your order, you'll need to add a product to your cart, you can use the link below to consult our products

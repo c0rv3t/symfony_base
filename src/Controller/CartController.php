@@ -75,21 +75,19 @@ class CartController extends AbstractController
 
         $order = $orderRepository->findOneBy(['user' => $user, 'status' => 'Pending']);
 
-        $total = 0;
-
-        if (!$order) {
-            $order = new Order();
-            $order->setUser($user);
-            $order->setStatus(OrderStatus::Pending);
-            $order->setReference('ORD-' . str_pad($orderRepository->count([]) + 1, 3, '0', STR_PAD_LEFT));
-            $order->setCreatedAt(new \DateTime());
-
+        if ($order && $order->getOrderItem()->isEmpty()) {
+            $order->setStatus(OrderStatus::Canceled);
             $entityManager->persist($order);
             $entityManager->flush();
+            $order = null;
         }
 
-        foreach ($order->getOrderItem() as $item) {
-            $total += $item->getProductPrice() * $item->getQuantity();
+        $total = 0;
+
+        if ($order) {
+            foreach ($order->getOrderItem() as $item) {
+                $total += $item->getProductPrice() * $item->getQuantity();
+            }
         }
 
         return $this->render('cart/view.html.twig', [
@@ -106,16 +104,16 @@ class CartController extends AbstractController
             $this->addFlash('error', 'Order not found.');
             return $this->redirectToRoute('cart_view');
         }
-    
+
         if ($order->getStatus()->toString() !== OrderStatus::Pending->toString()) {
             $this->addFlash('error', 'Order cannot be canceled because it is not Pending.');
             return $this->redirectToRoute('cart_view');
         }
-    
+
         $order->setStatus(OrderStatus::Canceled);
         $entityManager->flush();
-    
-        $this->addFlash('success', 'Order has been successfully canceled.');
+
+        $this->addFlash('success', 'Your order has been successfully canceled.');
         return $this->redirectToRoute('cart_view');
     }
 
@@ -153,7 +151,7 @@ class CartController extends AbstractController
         }
 
         if (!$allAvailable) {
-            $this->addFlash('danger', 'One or more products are not available.');
+            $this->addFlash('danger', 'One or more products in you cart are not available.');
             return $this->redirectToRoute('cart_view');
         }
 
@@ -179,6 +177,28 @@ class CartController extends AbstractController
         $entityManager->flush();
 
         $this->addFlash('success', 'Transaction successful!');
+
+        return $this->redirectToRoute('cart_view');
+    }
+
+    #[Route('/order_item/delete/{id}', name: 'order_item_delete', methods: ['POST'])]
+    public function deleteOrderItem(int $id, Request $request, EntityManagerInterface $entityManager): RedirectResponse {
+        $orderItem = $entityManager->getRepository(OrderItem::class)->find($id);
+
+        if (!$orderItem) {
+            $this->addFlash('danger', 'Order item not found.');
+            return $this->redirectToRoute('cart_view');
+        }
+
+        if (!$this->isCsrfTokenValid('delete_order_item' . $orderItem->getId(), $request->request->get('_token'))) {
+            $this->addFlash('danger', 'Invalid token.');
+            return $this->redirectToRoute('cart_view');
+        }
+
+        $entityManager->remove($orderItem);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Item deleted successfully.');
 
         return $this->redirectToRoute('cart_view');
     }

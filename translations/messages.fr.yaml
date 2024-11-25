@@ -78,6 +78,8 @@ cart:
   price: Prix
   quantity: Quantité
   total: Prix total
+  delete: Supprimer
   yourOrder: Votre commande
   totalPrice: Total à payer
-  emptyCart: Votre panier est vide
+  emptyOrder: Vous n'avez pas de commande en attente
+  toOrder: Pour consulter votre commande, ajouter un produit à votre panier depuis la page ci-dessous
