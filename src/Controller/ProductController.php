@@ -5,10 +5,12 @@ namespace App\Controller;
 use App\Entity\Image;
 use App\Entity\Product;
 use App\Form\ProductType;
+use App\Repository\OrderRepository;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,7 +21,7 @@ use Symfony\Component\Translation\LocaleSwitcher;
 class ProductController extends AbstractController
 {
     #[Route('/product/list', name: 'product_list')]
-    public function list(ProductRepository $product, Request $request, LocaleSwitcher $localeSwitcher, PaginatorInterface $paginator): Response
+    public function list(ProductRepository $product, Request $request, LocaleSwitcher $localeSwitcher, OrderRepository $orderRepository, Security $security): Response
     {
         $locale = $request->getSession()->get('_locale', 'en');
         $localeSwitcher->setLocale($locale);
@@ -28,9 +30,16 @@ class ProductController extends AbstractController
 
         $products = $product->findAllProducts();
 
+        $user = $security->getUser();
+
+        $order = $orderRepository->findOneBy(['user' => $user, 'status' => 'Pending']);
+
+        $itemCount = $order ? count($order->getOrderItem()) : 0;
+
         return $this->render('product/list.html.twig', [
             'pagination' => $products,
             'searchQuery' => $query,
+            'itemCount' => $itemCount,
         ]);
     }
 

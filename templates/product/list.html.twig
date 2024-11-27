@@ -57,33 +57,37 @@
         {% for product in pagination %}
             <div class="col-12 col-md-6 col-xl-4 mb-4 product-item {{ product.category.description | lower | replace({' ': '-'}) }} {% if product.status.toString() == 'Available' %}available{% endif %} {% if product.status.toString() == 'Preorder' %}preorder{% endif %} {% if product.status.toString() == 'Out of stock' %}out-of-stock{% endif %}" data-name="{{ product.name }}">
                 <div class="card">
-                    <div class="card-body">
+                    <div class="image-container position-relative">
                         {% if product.image %}
                             <img src="{{ asset(product.image.url) }}" class="card-img-top" alt="{{ product.name }}">
                         {% else %}
                             <img src="{{ asset('/img/default.png') }}" class="card-img-top" alt="Default Image">
                         {% endif %}
-                        <h3 class="card-title text-center my-4">{{ product.name }}</h3>
-                        <p class="card-text">{{ product.price }} €</p>
-                        <p class="card-text">{{ "product.description" | trans }}: {{ product.description }}</p>
-                        <p class="card-text">{{ "product.stock" | trans }}: {{ product.stock }}</p>
-                        <p class="card-text">{{ product.category.description }}</p>
-                        <p class="card-text">{{ "product.status" | trans }}: 
-                            {% if product.status.toString() == "Available" %}
-                                {{ "product.available" | trans }}
-                            {% elseif product.status.toString() == "Preorder" %}
-                                {{ "product.preorder" | trans }}
-                            {% elseif product.status.toString() == "Out of stock" %}
-                                {{ "product.out" | trans }}
-                            {% endif %}
-                        </p>
-
                         {% if is_granted('ROLE_ADMIN') %}
-                            <a class="btn btn-warning" href="{{ path('product_edit', { id: product.id }) }}">{{ 'product.edit' | trans }}</a>
-                            <a class="btn btn-danger" onclick="deleteProduct({{ product.id }}, `{{ product.name }}`, '{{ csrf_token('delete' ~ product.id) }}')">{{ 'product.delete' | trans }}</a>
+                            <div class="card-img-overlay">
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    <a class="btn-sm btn-warning rounded-pill" href="{{ path('product_edit', { id: product.id }) }}">{{ 'product.edit' | trans }}</a>
+                                    <a class="btn-sm btn-danger rounded-pill" onclick="deleteProduct({{ product.id }}, `{{ product.name }}`, '{{ csrf_token('delete' ~ product.id) }}')">{{ 'product.delete' | trans }}</a>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">{{ product.name }}</h3>
+                        <p class="card-text">{{ product.price }} €</p>
+                        {% if product.status.toString() == "Available" %}
+                            <span class="badge bg-success rounded-pill text-white">{{ "product.available" | trans }}</span>
+                        {% elseif product.status.toString() == "Preorder" %}
+                            <span class="badge bg-warning rounded-pill text-white">{{ "product.preorder" | trans }}</span>
+                        {% elseif product.status.toString() == "Out of stock" %}
+                            <span class="badge bg-danger rounded-pill text-white">{{ "product.out" | trans }}</span>
                         {% endif %}
                         {% if product.status.toString() != "Out of stock" %}
-                            <img src="{{ asset('/img/add2Cart.png') }}" class="btn" data-action="click->cart#addToCart" data-product-id="{{ product.id }}" data-product-name="{{ product.name }}" data-product-price="{{ product.price }}" style="height:80px;">
+                            <form action="{{ path('cart_add', { id: product.id }) }}" method="POST" style="display: inline;">
+                                <button class="add-to-cart" data-id="{{ product.id }}" style="background: none; border: none;">
+                                    <img src="{{ asset('/img/add2Cart.png') }}" alt="Add to Cart" style="width: 40px;">
+                                </button>
+                            </form>
                         {% endif %}
                     </div>
                 </div>
@@ -153,5 +157,53 @@
             form.submit();
         }
     }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.add-to-cart').forEach(button => {
+            button.addEventListener('click', async (event) => {
+                event.preventDefault();
+
+                const productId = button.getAttribute('data-id');
+                const response = await fetch(`/cart/add/${productId}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success) {
+                        const cartBadge = document.querySelector('.badge');
+                        if (cartBadge) {
+                            cartBadge.textContent = result.itemCount;
+                        }
+                    } else {
+                        console.error(result.error || 'Failed to add item to cart.');
+                    }
+                } else {
+                    console.error('Network error occurred.');
+                }
+            });
+        });
+    });
+
+    function updateButtonFeedback(button) {
+        const originalText = button.textContent;
+        button.textContent = 'Product added!';
+        button.disabled = true;
+
+        setTimeout(() => {
+            button.textContent = originalText;
+            button.disabled = false;
+        }, 2000);
+    }
+
+    document.querySelectorAll('.add-to-cart').forEach(button => {
+        button.addEventListener('click', async () => {
+            updateButtonFeedback(button);
+        });
+    });
 </script>
 {% endblock %}

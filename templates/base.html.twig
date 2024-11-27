@@ -46,4 +46,22 @@
             bsDropdown.hide();
         }
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function updateCartItemCount() {
+                fetch('/cart/item-count')
+                    .then(response => response.json())
+                    .then(data => {
+                        const cartCount = document.querySelector('.cart-item-count');
+                        if (cartCount) {
+                            cartCount.textContent = data.count;
+                        }
+                    });
+            }
+
+            updateCartItemCount();
+
+            setInterval(updateCartItemCount, 5000);
+        });
+    </script>
 </html>

@@ -73,9 +73,9 @@
                     <li class="navbar-nav me-auto align-items-end">
                         <a class="nav-link d-flex" href="{{ path('cart_view') }}">
                             <img src="{{ asset('img/cart.png') }}" alt="Cart" style="width: 40px;">
-                            <div class="position-absolute" style="right: 35px;">
-                                <span class="badge bg-danger rounded-pill">
-                                    0
+                            <div class="position-absolute">
+                                <span class="badge bg-danger rounded-pill cart-item-count">
+                                    {{ itemCount|default(0) }}
                                 </span>
                             </div>
                         </a>

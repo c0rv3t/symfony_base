@@ -1,5 +1,4 @@
 const Encore = require('@symfony/webpack-encore');
-const StimulusBridge = require('@symfony/stimulus-bridge/webpack-plugin');
 
 if (!Encore.isRuntimeEnvironmentConfigured()) {
     Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'dev');
@@ -13,9 +12,7 @@ Encore
     .cleanupOutputBeforeBuild()
     .enableSourceMaps(!Encore.isProduction())
     .enableVersioning(Encore.isProduction())
-    .enableNodeModulesIntegration()
     .enableSingleRuntimeChunk()
-    .addPlugin(new StimulusBridge())
     .configureBabelPresetEnv((config) => {
         config.useBuiltIns = 'usage';
         config.corejs = '3.38';

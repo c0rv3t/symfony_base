@@ -12,6 +12,7 @@ use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -20,34 +21,35 @@ use Symfony\Component\Translation\LocaleSwitcher;
 class CartController extends AbstractController
 {
     #[Route('/cart/add/{id}', name: 'cart_add', methods: ['POST'])]
-    public function addToCart($id, Request $request, EntityManagerInterface $entityManager, ProductRepository $productRepository, OrderRepository $orderRepository, OrderItemRepository $orderItemRepository, Security $security, LocaleSwitcher $localeSwitcher): RedirectResponse
-    {
-        $locale = $request->getSession()->get('_locale', 'en');
-        $localeSwitcher->setLocale($locale);
-
-        $product = $productRepository->find($id);
-
-        if (!$product) {
-            throw $this->createNotFoundException('Product not found');
-        }
-
+    public function addToCart($id, EntityManagerInterface $entityManager, ProductRepository $productRepository, OrderRepository $orderRepository, Security $security): JsonResponse {
         $user = $security->getUser();
-
-        $order = $orderRepository->findOneBy(['user' => $user, 'status' => 'Pending']);
-
+    
+        if (!$user) {
+            return new JsonResponse(['error' => 'User not authenticated'], 403);
+        }
+    
+        $product = $productRepository->find($id);
+        if (!$product) {
+            return new JsonResponse(['error' => 'Product not found'], 404);
+        }
+    
+        $order = $orderRepository->findOneBy(['user' => $user, 'status' => OrderStatus::Pending]);
+    
         if (!$order) {
             $order = new Order();
             $order->setUser($user);
             $order->setStatus(OrderStatus::Pending);
             $order->setCreatedAt(new \DateTime());
             $order->setReference('ORD-' . str_pad($orderRepository->count([]) + 1, 3, '0', STR_PAD_LEFT));
-
+    
             $entityManager->persist($order);
             $entityManager->flush();
         }
-
-        $existingOrderItem = $orderItemRepository->findOneBy(['anOrder' => $order, 'product' => $product]);
-
+    
+        $existingOrderItem = $order->getOrderItem()->filter(function ($item) use ($product) {
+            return $item->getProduct() === $product;
+        })->first();
+    
         if ($existingOrderItem) {
             $existingOrderItem->setQuantity($existingOrderItem->getQuantity() + 1);
         } else {
@@ -56,13 +58,13 @@ class CartController extends AbstractController
             $orderItem->setProduct($product);
             $orderItem->setQuantity(1);
             $orderItem->setProductPrice($product->getPrice());
-
+    
             $entityManager->persist($orderItem);
         }
-
+    
         $entityManager->flush();
-
-        return $this->redirectToRoute('cart_view');
+    
+        return new JsonResponse(['success' => true, 'itemCount' => count($order->getOrderItem())]);
     }
 
     #[Route('/cart', name: 'cart_view')]
@@ -73,7 +75,13 @@ class CartController extends AbstractController
 
         $user = $security->getUser();
 
+        if (!$user) {
+            return $this->redirectToRoute('login');
+        }
+
         $order = $orderRepository->findOneBy(['user' => $user, 'status' => 'Pending']);
+
+        $itemCount = $order ? count($order->getOrderItem()) : 0;
 
         if ($order && $order->getOrderItem()->isEmpty()) {
             $order->setStatus(OrderStatus::Canceled);
@@ -92,7 +100,8 @@ class CartController extends AbstractController
 
         return $this->render('cart/view.html.twig', [
             'order' => $order,
-            'total' => $total
+            'total' => $total,
+            'itemCount' => $itemCount,
         ]);
     }
 
@@ -201,5 +210,23 @@ class CartController extends AbstractController
         $this->addFlash('success', 'Item deleted successfully.');
 
         return $this->redirectToRoute('cart_view');
+    }
+
+    #[Route('/cart/item-count', name: 'cart_item_count', methods: ['GET'])]
+    public function getCartItemCount(EntityManagerInterface $entityManager): JsonResponse
+    {
+        $user = $this->getUser();
+        $order = $entityManager->getRepository(Order::class)->findOneBy([
+            'user' => $user,
+            'status' => OrderStatus::Pending
+        ]);
+
+        if (!$order) {
+            return new JsonResponse(['count' => 0]);
+        }
+
+        $itemCount = count($order->getOrderItem());
+
+        return new JsonResponse(['count' => $itemCount]);
     }
 }

@@ -19,7 +19,7 @@ class OrderRepository extends ServiceEntityRepository
     public function findLatestOrders(int $limit = 5): array
     {
         return $this->createQueryBuilder('o')
-            ->orderBy('o.createdAt', 'DESC')
+            ->orderBy('o.reference', 'DESC')
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();
