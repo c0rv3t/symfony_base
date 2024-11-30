@@ -7,6 +7,7 @@ title:
   users: Nos utilisateurs
   orders: Nos commandes
   cart: Votre commande
+  details: Détails
 
 home:
   welcome: Bienvenue
@@ -50,6 +51,8 @@ register:
   password: Mot de passe
 
 product:
+  categories: Toutes catégories
+  statuses: Tout status
   description: Description
   stock: Stock
   status: Statut
@@ -62,6 +65,11 @@ product:
   available: Disponible
   preorder: Précommande
   out: Rupture de stock
+
+details:
+  quantity: Quantité
+  addToCart: Ajouter au panier
+  back: Liste des produits
 
 users:
   email: Mail
@@ -77,6 +85,8 @@ cart:
   product: Produit
   price: Prix
   quantity: Quantité
+  stock: Stock
+  status: Statut
   total: Prix total
   delete: Supprimer
   yourOrder: Votre commande

@@ -25,12 +25,12 @@ class CartController extends AbstractController
         $user = $security->getUser();
     
         if (!$user) {
-            return new JsonResponse(['error' => 'User not authenticated'], 403);
+            return new JsonResponse(['danger' => 'User not authenticated'], 403);
         }
     
         $product = $productRepository->find($id);
         if (!$product) {
-            return new JsonResponse(['error' => 'Product not found'], 404);
+            return new JsonResponse(['danger' => 'Product not found'], 404);
         }
     
         $order = $orderRepository->findOneBy(['user' => $user, 'status' => OrderStatus::Pending]);
@@ -110,12 +110,12 @@ class CartController extends AbstractController
         $order = $orderRepository->find($id);
 
         if (!$order) {
-            $this->addFlash('error', 'Order not found.');
+            $this->addFlash('danger', 'Order not found.');
             return $this->redirectToRoute('cart_view');
         }
 
         if ($order->getStatus()->toString() !== OrderStatus::Pending->toString()) {
-            $this->addFlash('error', 'Order cannot be canceled because it is not Pending.');
+            $this->addFlash('danger', 'Order cannot be canceled because it is not Pending.');
             return $this->redirectToRoute('cart_view');
         }
 
@@ -228,5 +228,30 @@ class CartController extends AbstractController
         $itemCount = count($order->getOrderItem());
 
         return new JsonResponse(['count' => $itemCount]);
+    }
+
+    #[Route('/cart/update/{id}', name: 'cart_update', methods: ['POST'])]
+    public function updateCartItem($id, Request $request, EntityManagerInterface $entityManager, OrderItemRepository $orderItemRepository): JsonResponse {
+        $data = json_decode($request->getContent(), true);
+        $newQuantity = $data['quantity'] ?? null;
+
+        if (!$newQuantity || $newQuantity < 1) {
+            return new JsonResponse(['success' => false, 'danger' => 'Invalid quantity'], 400);
+        }
+
+        $orderItem = $orderItemRepository->find($id);
+
+        if (!$orderItem) {
+            return new JsonResponse(['success' => false, 'danger' => 'Order item not found'], 404);
+        }
+
+        if ($newQuantity > $orderItem->getProduct()->getStock()) {
+            return new JsonResponse(['success' => false, 'danger' => 'Quantity exceeds available stock'], 400);
+        }
+
+        $orderItem->setQuantity($newQuantity);
+        $entityManager->flush();
+
+        return new JsonResponse(['success' => true]);
     }
 }

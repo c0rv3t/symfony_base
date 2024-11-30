@@ -24,6 +24,8 @@
                                 <th>{{ "cart.product" | trans }}</th>
                                 <th>{{ "cart.price" | trans }}</th>
                                 <th>{{ "cart.quantity" | trans }}</th>
+                                <th>{{ "cart.stock" | trans }}</th>
+                                <th>{{ "cart.status" | trans }}</th>
                                 <th>{{ "cart.total" | trans }}</th>
                                 <th>{{ "cart.delete" | trans }}</th>
                             </tr>
@@ -33,7 +35,9 @@
                                 <tr>
                                     <td>{{ item.product.name }}</td>
                                     <td>{{ item.productPrice }} €</td>
-                                    <td>{{ item.quantity }}</td>
+                                    <td><input type="number" min="1" max="{{ item.product.stock }}" data-id="{{ item.id }}" value="{{ item.quantity }}" class="quantity-input"/></td>
+                                    <td>{{ item.product.stock }}</td>
+                                    <td>{{ item.product.status.toString() }}</td>
                                     <td>{{ item.productPrice * item.quantity }} €</td>
                                     <td>
                                         <form action="{{ path('order_item_delete', { id: item.id }) }}" method="POST" class="d-inline">
@@ -72,4 +76,36 @@
         <p>{{ "cart.toOrder" | trans }}</p>
     {% endif %}
 </div>
+<script>
+    document.querySelectorAll('.quantity-input').forEach(input => {
+        input.addEventListener('change', function () {
+            const itemId = this.dataset.id;
+            const newQuantity = parseInt(this.value);
+            const maxQuantity = parseInt(this.max);
+            const minQuantity = parseInt(this.min);
+
+            if (newQuantity < minQuantity || newQuantity > maxQuantity) {
+                alert(`Please enter a quantity between ${minQuantity} and ${maxQuantity}.`);
+                this.value = Math.min(Math.max(newQuantity, minQuantity), maxQuantity);
+                return;
+            }
+
+            fetch(`/cart/update/${itemId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: JSON.stringify({ quantity: newQuantity })
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Failed to update the quantity.');
+            })
+            .catch(error => console.error(error));
+        });
+    });
+</script>
 {% endblock %}

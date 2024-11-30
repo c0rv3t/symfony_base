@@ -61,10 +61,10 @@ class UserFixture extends Fixture implements DependentFixtureInterface
         $manager->persist($user4);
 
         $user5 = new User();
-        $hashedPassword = $this->passwordHasher->hashPassword($user5, "vraimentMonFrr1!");
-        $user5->setEmail("arthur.ducret@email.com");
+        $hashedPassword = $this->passwordHasher->hashPassword($user5, "leMdpDuChef0:");
+        $user5->setEmail("arthur.maloron@mail.com");
         $user5->setFirstName("Arthur");
-        $user5->setLastName("Ducret");
+        $user5->setLastName("Maloron");
         $user5->setRoles(["ROLE_ADMIN"]);
         $user5->setPassword($hashedPassword);
         $user5->setAddress($this->getReference(AddressFixture::ADDRESS_REFERENCE . "_1"));

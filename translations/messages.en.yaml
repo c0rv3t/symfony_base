@@ -7,6 +7,7 @@ title:
   users: Users
   orders: Orders
   cart: Cart
+  details: Details
 
 home:
   welcome: Welcome
@@ -50,6 +51,8 @@ register:
   password: Password
 
 product:
+  categories: All categories
+  statuses: All statuses
   description: Description
   stock: Stock
   status: Status
@@ -62,6 +65,11 @@ product:
   available: Available
   preorder: Preorder
   out: Out of stock
+
+details:
+  quantity: Quantity
+  addToCart: Add to cart
+  back: Back to products
 
 users:
   email: Email
@@ -77,6 +85,8 @@ cart:
   product: Product
   price: Price
   quantity: Quantity
+  stock: Stock
+  status: Status
   total: Total
   delete: Delete
   yourOrder: Your order

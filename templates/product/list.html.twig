@@ -29,8 +29,19 @@
 
     <div class="row mb-4">
         <div class="col-12">
+            <button class="btn btn-primary filter-button" data-filter="*">{{ "product.statuses" | trans }}</button>
+            <button class="btn btn-primary filter-button" data-filter=".available">{{ "product.available" | trans }}</button>
+            <button class="btn btn-primary filter-button" data-filter=".preorder">{{ "product.preorder" | trans }}</button>
+            {% if is_granted('ROLE_ADMIN') %}
+                <button class="btn btn-primary filter-button" data-filter=".out-of-stock">{{ "product.out" | trans }}</button>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12 col-md-6">
             <select class="form-select category-filter btn-primary">
-                <option value="*">All Categories</option>
+                <option value="*">{{ "product.categories" | trans }}</option>
                 {% set unique_categories = [] %}
                 {% for product in pagination %}
                     {% if product.category.description not in unique_categories %}
@@ -39,17 +50,6 @@
                     {% endif %}
                 {% endfor %}
             </select>
-        </div>
-    </div>
-
-    <div class="row mb-4">
-        <div class="col-12">
-            <button class="btn btn-primary filter-button" data-filter="*">All Statuses</button>
-            <button class="btn btn-primary filter-button" data-filter=".available">Available</button>
-            <button class="btn btn-primary filter-button" data-filter=".preorder">Preorder</button>
-            {% if is_granted('ROLE_ADMIN') %}
-                <button class="btn btn-primary filter-button" data-filter=".out-of-stock">Out of Stock</button>
-            {% endif %}
         </div>
     </div>
 
@@ -73,8 +73,12 @@
                         {% endif %}
                     </div>
                     <div class="card-body">
-                        <h3 class="card-title">{{ product.name }}</h3>
-                        <p class="card-text">{{ product.price }} €</p>
+                        <a href="{{ path('product_detail', { id: product.id }) }}">
+                            <h3 class="card-title">{{ product.name }}</h3>
+                        </a>
+                        <a href="{{ path('product_detail', { id: product.id }) }}">
+                            <h5 class="card-text">{{ product.price }} €</h5>
+                        </a>
                         {% if product.status.toString() == "Available" %}
                             <span class="badge bg-success rounded-pill text-white">{{ "product.available" | trans }}</span>
                         {% elseif product.status.toString() == "Preorder" %}

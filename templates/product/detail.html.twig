@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ product.name }} - {{ "title.details"| trans }}{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    {% for type, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ type }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    <div class="row">
+        <div class="col-md-6">
+            {% if product.image %}
+                <img src="{{ asset(product.image.url) }}" class="img-fluid" alt="{{ product.name }}">
+            {% else %}
+                <img src="{{ asset('/img/default.png') }}" class="img-fluid" alt="Default Image">
+            {% endif %}
+        </div>
+        <div class="col-md-6">
+            <h1>{{ product.name }}</h1>
+            <h4>{{ product.price }} €</h4>
+            <p>{{ product.description }}</p>
+            <h6>{{ "product.stock" | trans }}: {{ product.stock }}</h6>
+
+            {% if product.status.toString() == "Available" %}
+                <span class="badge bg-success text-white rounded-pill">{{ "product.available" | trans }}</span>
+            {% elseif product.status.toString() == "Preorder" %}
+                <span class="badge bg-warning text-white rounded-pill">{{ "product.preorder" | trans }}</span>
+            {% elseif product.status.toString() == "Out of stock" %}
+                <span class="badge bg-danger text-white rounded-pill">{{ "product.out" | trans }}</span>
+            {% endif %}
+
+            {% if product.stock > 0 %}
+                <form method="POST">
+                    <label for="quantity">{{ "details.quantity" | trans }}:</label>
+                    <input type="number" id="quantity" name="quantity" min="1" max="{{ product.stock }}" value="1" class="form-control mb-2" style="width: 100px;">
+                    <button type="submit" class="btn btn-primary">{{ "details.addToCart" | trans }}</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+    <div class="mt-5 text-center">
+        <a href="{{ path('product_list') }}" class="btn btn-primary">{{ "details.back" | trans }}</a>
+    </div>
+</div>
+{% endblock %}

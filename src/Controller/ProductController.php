@@ -3,12 +3,14 @@
 namespace App\Controller;
 
 use App\Entity\Image;
+use App\Entity\Order;
+use App\Entity\OrderItem;
 use App\Entity\Product;
+use App\Enum\OrderStatus;
 use App\Form\ProductType;
 use App\Repository\OrderRepository;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,9 +33,7 @@ class ProductController extends AbstractController
         $products = $product->findAllProducts();
 
         $user = $security->getUser();
-
         $order = $orderRepository->findOneBy(['user' => $user, 'status' => 'Pending']);
-
         $itemCount = $order ? count($order->getOrderItem()) : 0;
 
         return $this->render('product/list.html.twig', [
@@ -173,5 +173,55 @@ class ProductController extends AbstractController
         }
     
         return new JsonResponse($results);
+    }
+
+    #[Route('/product/detail/{id}', name: 'product_detail', methods: ['GET', 'POST'])]
+    public function detail($id, ProductRepository $productRepository, Request $request, Security $security, OrderRepository $orderRepository, EntityManagerInterface $entityManager, LocaleSwitcher $localeSwitcher): Response {
+        $locale = $request->getSession()->get('_locale', 'en');
+        $localeSwitcher->setLocale($locale);
+
+        $product = $productRepository->find($id);
+
+        if (!$product) {
+            throw $this->createNotFoundException('Product not found.');
+        }
+
+        $user = $security->getUser();
+        $order = $orderRepository->findOneBy(['user' => $user, 'status' => 'Pending']);
+        $itemCount = $order ? count($order->getOrderItem()) : 0;
+
+        if ($request->isMethod('POST')) {
+            $quantity = (int) $request->request->get('quantity', 1);
+
+            if ($quantity > 0 && $quantity <= $product->getStock()) {
+                $order = $order ?: new Order();
+                $order->setUser($user);
+                $order->setStatus(OrderStatus::Pending);
+                $order->setCreatedAt(new \DateTime());
+
+                $orderItem = $order->getOrderItem()->filter(fn($item) => $item->getProduct() === $product)->first() ?: new OrderItem();
+                $orderItem->setAnOrder($order);
+                $orderItem->setProduct($product);
+                $orderItem->setQuantity($orderItem->getQuantity() + $quantity);
+                $orderItem->setProductPrice($product->getPrice());
+
+                $entityManager->persist($orderItem);
+                $order->addOrderItem($orderItem);
+
+                $entityManager->persist($order);
+                $entityManager->flush();
+
+                $this->addFlash('success', 'Product added to cart.');
+
+                return $this->redirectToRoute('product_detail', ['id' => $product->getId()]);
+            } else {
+                $this->addFlash('danger', 'Invalid quantity.');
+            }
+        }
+
+        return $this->render('product/detail.html.twig', [
+            'product' => $product,
+            'itemCount' => $itemCount,
+        ]);
     }
 }

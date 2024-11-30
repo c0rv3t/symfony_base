@@ -31,7 +31,7 @@ class OrderRepository extends ServiceEntityRepository
             ->select('o.id, o.createdAt, SUM(oi.productPrice * oi.quantity) as orderTotal')
             ->join('o.orderItem', 'oi')
             ->groupBy('o.id')
-            ->orderBy('o.createdAt', 'DESC')
+            ->orderBy('o.reference', 'DESC')
             ->getQuery()
             ->getResult();
     }

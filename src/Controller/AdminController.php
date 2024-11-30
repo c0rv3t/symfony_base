@@ -52,7 +52,7 @@ class AdminController extends AbstractController
 
         $queryBuilder = $orderRepository->createQueryBuilder('o')
         ->leftJoin('o.orderItem', 'oi')
-        ->orderBy('o.createdAt', 'DESC')
+        ->orderBy('o.reference', 'DESC')
         ->addSelect('oi');
 
         $pagination = $paginator->paginate(
