@@ -19,9 +19,17 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\LocaleSwitcher;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ProductController extends AbstractController
 {
+    private TranslatorInterface $translator;
+
+    public function __construct(TranslatorInterface $translator)
+    {
+        $this->translator = $translator;
+    }
+
     #[Route('/product/list', name: 'product_list')]
     public function list(ProductRepository $product, Request $request, LocaleSwitcher $localeSwitcher, OrderRepository $orderRepository, Security $security): Response
     {
@@ -44,8 +52,7 @@ class ProductController extends AbstractController
     }
 
     #[Route('/product/add', name: 'product_add')]
-    public function add(Request $request, LocaleSwitcher $localeSwitcher, EntityManagerInterface $entityManager)
-    {
+    public function add(Request $request, LocaleSwitcher $localeSwitcher, EntityManagerInterface $entityManager) {
         $locale = $request->getSession()->get('_locale', 'en');
         $localeSwitcher->setLocale($locale);
 
@@ -75,7 +82,7 @@ class ProductController extends AbstractController
             $entityManager->persist($product);
             $entityManager->flush();
 
-            $this->addFlash('success', 'Produit ajouté avec succès !');
+            $this->addFlash('success', $this->translator->trans('product.addedSuccessfully'));
 
             return $this->redirectToRoute('product_list');
         }
@@ -86,8 +93,7 @@ class ProductController extends AbstractController
     }
 
     #[Route('/product/edit/{id}', name: 'product_edit')]
-    public function edit(Request $request, LocaleSwitcher $localeSwitcher, Product $product, EntityManagerInterface $entityManager)
-    {
+    public function edit(Request $request, LocaleSwitcher $localeSwitcher, Product $product, EntityManagerInterface $entityManager) {
         $locale = $request->getSession()->get('_locale', 'en');
         $localeSwitcher->setLocale($locale);
 
@@ -122,7 +128,7 @@ class ProductController extends AbstractController
             $entityManager->persist($product);
             $entityManager->flush();
 
-            $this->addFlash('info', 'Produit modifié avec succès !');
+            $this->addFlash('info', $this->translator->trans('product.editedSuccessfully'));
 
             return $this->redirectToRoute('product_list');
         }
@@ -134,20 +140,22 @@ class ProductController extends AbstractController
     }
 
     #[Route('/product/delete/{id}', name: 'product_delete', methods: ['POST'])]
-    public function delete(Request $request, Product $product, EntityManagerInterface $entityManager)
-    {
+    public function delete(Request $request, LocaleSwitcher $localeSwitcher, Product $product, EntityManagerInterface $entityManager) {
+        $locale = $request->getSession()->get('_locale', 'en');
+        $localeSwitcher->setLocale($locale);
+
         if ($this->isCsrfTokenValid('delete' . $product->getId(), $request->request->get('_token'))) {
             $orderItems = $product->getOrderItems();
             
             if (!$orderItems->isEmpty()) {
-                $this->addFlash('danger', "Ce produit ne peut pas être supprimé car il fait partie d'une commande.");
+                $this->addFlash('danger', $this->translator->trans('product.partOfACommand'));
                 return $this->redirectToRoute('product_list');
             }
             
             $entityManager->remove($product);
             $entityManager->flush();
     
-            $this->addFlash('success', 'Produit supprimé avec succès !');
+            $this->addFlash('success', $this->translator->trans('product.deletedSuccessfully'));
         } else {
             $this->addFlash('danger', 'Échec de la suppression du produit. Token CSRF invalide.');
         }
@@ -211,11 +219,11 @@ class ProductController extends AbstractController
                 $entityManager->persist($order);
                 $entityManager->flush();
 
-                $this->addFlash('success', 'Product added to cart.');
+                $this->addFlash('success', $this->translator->trans('product.added'));
 
                 return $this->redirectToRoute('product_detail', ['id' => $product->getId()]);
             } else {
-                $this->addFlash('danger', 'Invalid quantity.');
+                $this->addFlash('danger', $this->translator->trans('product.invalidQuantity'));
             }
         }
 

@@ -16,7 +16,7 @@ home:
   ratio: Notre ratio de disponibilité des produits
   available: Disponible
   out: Rupture de stock
-  preorder: Precommande
+  preorder: Précommande
 
 navbar:
   home: Accueil
@@ -52,7 +52,7 @@ register:
 
 product:
   categories: Toutes catégories
-  statuses: Tout status
+  statuses: Tout statut
   description: Description
   stock: Stock
   status: Statut
@@ -65,11 +65,29 @@ product:
   available: Disponible
   preorder: Précommande
   out: Rupture de stock
+  addedSuccessfully: Produit ajouté avec succès!
+  editedSuccessfully: Produit modifié avec succès!
+  partOfACommand: Ce produit ne peut pas être supprimé car il fait partie d'une commande.
+  deletedSuccessfully: Produit supprimé avec succès!
+  added: Produit ajouté au panier!
+  invalidQuantity: Quantité invalide.
 
 details:
   quantity: Quantité
   addToCart: Ajouter au panier
   back: Liste des produits
+
+dashboard:
+  name: Tableau de bord
+  productCategory: Nombre de produits par catégorie
+  category: Categorie
+  total: Total
+  noCategory: Aucune catégorie trouvée.
+  latestOrders: Les 5 dernières commandes
+  productAvailability: Ratio de disponibilité des produits
+  totalSales: Montant total des ventes par mois (12 derniers mois)
+  month: Mois
+  earnings: Profits
 
 users:
   email: Mail
@@ -81,6 +99,21 @@ users:
   noAddress: Aucune d'adresse renseignée
   list: Liste des utilisateurs
 
+orders:
+  listing: Liste des commandes
+  id: ID
+  customer: Client
+  mail: Mail
+  status: Statut
+  reference: Reference
+  orderDate: Date commande
+  totalAmount: Montant total
+  pending: En attente
+  shipped: Expédiée
+  delivered: Livrée
+  canceled: Annulée
+  noOrder: Aucune commande trouvée.
+
 cart:
   product: Produit
   price: Prix
@@ -89,7 +122,16 @@ cart:
   status: Statut
   total: Prix total
   delete: Supprimer
+  pay: Payer
+  cancel: Annuler
   yourOrder: Votre commande
   totalPrice: Total à payer
   emptyOrder: Vous n'avez pas de commande en attente
   toOrder: Pour consulter votre commande, ajouter un produit à votre panier depuis la page ci-dessous
+  orderNotFound: Commande non trouvée.
+  orderIsPending: Votre commande ne peut pas être annulée car elle n'est pas en attente.
+  orderCanceled: Votre commande a été annulée avec succès.
+  orderUnavailable: Au moins un des produits dans votre panier n'est pas disponible.
+  orderInsufficientStock: Insufficient stock for one or more products.
+  orderPaid: Achat effectué avec succès!
+  orderItemDeleted: Produit supprimé.

@@ -35,9 +35,23 @@
                                 <tr>
                                     <td>{{ item.product.name }}</td>
                                     <td>{{ item.productPrice }} €</td>
-                                    <td><input type="number" min="1" max="{{ item.product.stock }}" data-id="{{ item.id }}" value="{{ item.quantity }}" class="quantity-input"/></td>
+                                    <td>
+                                        {% if item.product.status.toString() != "Out of stock" %}
+                                            <input type="number" min="1" max="{{ item.product.stock }}" data-id="{{ item.id }}" value="{{ item.quantity }}" class="quantity-input"/>
+                                        {% else %}
+                                            0
+                                        {% endif %}
+                                    </td>
                                     <td>{{ item.product.stock }}</td>
-                                    <td>{{ item.product.status.toString() }}</td>
+                                    <td>
+                                        {% if item.product.status.toString() == "Available" %}
+                                            {{ "product.available" | trans }}
+                                        {% elseif item.product.status.toString() == "Preorder" %}
+                                            {{ "product.preorder" | trans }}
+                                        {% elseif item.product.status.toString() == "Out of stock" %}
+                                            {{ "product.out" | trans }}
+                                        {% endif %}
+                                    </td>
                                     <td>{{ item.productPrice * item.quantity }} €</td>
                                     <td>
                                         <form action="{{ path('order_item_delete', { id: item.id }) }}" method="POST" class="d-inline">
@@ -61,12 +75,12 @@
                 <div class="col-6 col-md-4 col-lg-3 col-xl-2">
                     <form action="{{ path('cart_pay') }}" method="POST">
                         <input type="hidden" name="_token" value="{{ csrf_token('cart_pay') }}">
-                        <button type="submit" class="btn btn-success">Pay</button>
+                        <button type="submit" class="btn btn-success">{{ "cart.pay" | trans }}</button>
                     </form>
                 </div>
                 <div class="col-6 col-md-4 col-lg-3 col-xl-2">
                     <form action="{{ path('order_cancel', { id: order.id }) }}" method="post" style="display:inline;">
-                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to cancel this order?');">Cancel Order</button>
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to cancel this order?');">{{ "cart.cancel" | trans }}</button>
                     </form>
                 </div>
             </div>

@@ -17,9 +17,17 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Translation\LocaleSwitcher;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CartController extends AbstractController
 {
+    private TranslatorInterface $translator;
+
+    public function __construct(TranslatorInterface $translator)
+    {
+        $this->translator = $translator;
+    }
+
     #[Route('/cart/add/{id}', name: 'cart_add', methods: ['POST'])]
     public function addToCart($id, EntityManagerInterface $entityManager, ProductRepository $productRepository, OrderRepository $orderRepository, Security $security): JsonResponse {
         $user = $security->getUser();
@@ -106,28 +114,34 @@ class CartController extends AbstractController
     }
 
     #[Route('/cart/cancel/{id}', name: 'order_cancel', methods: ['POST'])]
-    public function cancelOrder(int $id, OrderRepository $orderRepository, EntityManagerInterface $entityManager): RedirectResponse {
+    public function cancelOrder(int $id, OrderRepository $orderRepository, EntityManagerInterface $entityManager, LocaleSwitcher $localeSwitcher, Request $request): RedirectResponse {
+        $locale = $request->getSession()->get('_locale', 'en');
+        $localeSwitcher->setLocale($locale);
+
         $order = $orderRepository->find($id);
 
         if (!$order) {
-            $this->addFlash('danger', 'Order not found.');
+            $this->addFlash('danger', $this->translator->trans('cart.orderNotFound'));
             return $this->redirectToRoute('cart_view');
         }
 
         if ($order->getStatus()->toString() !== OrderStatus::Pending->toString()) {
-            $this->addFlash('danger', 'Order cannot be canceled because it is not Pending.');
+            $this->addFlash('danger', $this->translator->trans('cart.orderIsPending'));
             return $this->redirectToRoute('cart_view');
         }
 
         $order->setStatus(OrderStatus::Canceled);
         $entityManager->flush();
 
-        $this->addFlash('success', 'Your order has been successfully canceled.');
+        $this->addFlash('success', $this->translator->trans('cart.orderCanceled'));
         return $this->redirectToRoute('cart_view');
     }
 
     #[Route('/cart/pay', name: 'cart_pay', methods: ['POST'])]
-    public function pay(Request $request, EntityManagerInterface $entityManager, Security $security): RedirectResponse {
+    public function pay(Request $request, EntityManagerInterface $entityManager, Security $security, LocaleSwitcher $localeSwitcher): RedirectResponse {
+        $locale = $request->getSession()->get('_locale', 'en');
+        $localeSwitcher->setLocale($locale);
+
         if (!$this->isCsrfTokenValid('cart_pay', $request->request->get('_token'))) {
             $this->addFlash('danger', 'Invalid token');
             return $this->redirectToRoute('cart_view');
@@ -160,12 +174,12 @@ class CartController extends AbstractController
         }
 
         if (!$allAvailable) {
-            $this->addFlash('danger', 'One or more products in you cart are not available.');
+            $this->addFlash('danger', $this->translator->trans('cart.orderUnavailable'));
             return $this->redirectToRoute('cart_view');
         }
 
         if ($insufficientStock) {
-            $this->addFlash('danger', 'Insufficient stock for one or more products.');
+            $this->addFlash('danger', $this->translator->trans('cart.orderInsufficientStock'));
             return $this->redirectToRoute('cart_view');
         }
 
@@ -185,13 +199,16 @@ class CartController extends AbstractController
 
         $entityManager->flush();
 
-        $this->addFlash('success', 'Transaction successful!');
+        $this->addFlash('success', $this->translator->trans('cart.orderPaid'));
 
         return $this->redirectToRoute('cart_view');
     }
 
     #[Route('/order_item/delete/{id}', name: 'order_item_delete', methods: ['POST'])]
-    public function deleteOrderItem(int $id, Request $request, EntityManagerInterface $entityManager): RedirectResponse {
+    public function deleteOrderItem(int $id, EntityManagerInterface $entityManager, LocaleSwitcher $localeSwitcher, Request $request): RedirectResponse {
+        $locale = $request->getSession()->get('_locale', 'en');
+        $localeSwitcher->setLocale($locale);
+
         $orderItem = $entityManager->getRepository(OrderItem::class)->find($id);
 
         if (!$orderItem) {
@@ -207,7 +224,7 @@ class CartController extends AbstractController
         $entityManager->remove($orderItem);
         $entityManager->flush();
 
-        $this->addFlash('success', 'Item deleted successfully.');
+        $this->addFlash('success', $this->translator->trans('cart.orderItemDeleted'));
 
         return $this->redirectToRoute('cart_view');
     }

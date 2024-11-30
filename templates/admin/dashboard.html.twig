@@ -4,15 +4,15 @@
 
 {% block body %}
     <div class="container text-center my-5">
-        <h1>Admin Dashboard</h1>
+        <h1>{{ "dashboard.name" | trans }}</h1>
         <div class="row justify-content-md-center">
             <div class="col-12">
-                <h2>Nombre de produits par catégorie</h2>
+                <h2>{{ "dashboard.productCategory" | trans }}</h2>
                 <table class="table table-striped my-3">
                     <thead class="thead-dark">
                         <tr>
-                            <th>Category</th>
-                            <th>Total</th>
+                            <th>{{ "dashboard.category" | trans }}</th>
+                            <th>{{ "dashboard.total" | trans }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -22,7 +22,7 @@
                                 <td>{{ category.productCount }}</td>
                             </tr>
                         {% else %}
-                            <tr><td colspan="4">Aucune commande trouvée.</td></tr>
+                            <tr><td colspan="2">{{ "dashboard.noCategory" | trans }}</td></tr>
                         {% endfor %}
                     </tbody>
                 </table>
@@ -31,17 +31,17 @@
                     {{ knp_pagination_render(productsByCategory, '@KnpPaginator/Pagination/bootstrap_v5_pagination.html.twig') }}
                 </div>
 
-                <h2>Les 5 dernières commandes</h2>
+                <h2>{{ "dashboard.latestOrders" | trans }}</h2>
                 <table class="table table-striped table-responsive-lg my-3">
                     <thead class="thead-dark">
                         <tr>
-                            <th scope="col">ID</th>
-                            <th scope="col">Customer</th>
-                            <th scope="col">Mail</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Reference</th>
-                            <th scope="col">Order Date</th>
-                            <th scope="col">Total Amount</th>
+                            <th scope="col">{{ "orders.id" | trans }}</th>
+                            <th scope="col">{{ "orders.customer" | trans }}</th>
+                            <th scope="col">{{ "orders.mail" | trans }}</th>
+                            <th scope="col">{{ "orders.status" | trans }}</th>
+                            <th scope="col">{{ "orders.reference" | trans }}</th>
+                            <th scope="col">{{ "orders.orderDate" | trans }}</th>
+                            <th scope="col">{{ "orders.totalAmount" | trans }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -50,18 +50,28 @@
                                 <td>{{ order.id }}</td>
                                 <td>{{ order.user.firstName }} {{ order.user.lastName }}</td>
                                 <td>{{ order.user.email }}</td>
-                                <td>{{ order.status.toString() }}</td>
+                                <td>
+                                    {% if order.status.toString() == "Pending" %}
+                                        {{ "orders.pending" | trans }}
+                                    {% elseif order.status.toString() == "Shipped" %}
+                                        {{ "orders.shipped" | trans }}
+                                    {% elseif order.status.toString() == "Delivered" %}
+                                        {{ "orders.delivered" | trans }}
+                                    {% elseif order.status.toString() == "Canceled" %}
+                                        {{ "orders.canceled" | trans }}
+                                    {% endif %}
+                                </td>
                                 <td>{{ order.reference }}</td>
                                 <td>{{ order.createdAt|date('d-m-Y') }}</td>
                                 <td>{{ order.orderTotal | number_format(2, ',', ' ') }} €</td>
                             </tr>
                         {% else %}
-                            <tr><td colspan="4">Aucune commande trouvée.</td></tr>
+                            <tr><td colspan="7">{{ "orders.noOrder" | trans }}</td></tr>
                         {% endfor %}
                     </tbody>
                 </table>
 
-                <h2>Ratio de disponibilité des produits</h2>
+                <h2>{{ "dashboard.productAvailability" | trans }}</h2>
 
                 <div class="progress my-3 rounded-pill" style="height: 30px;">
                     <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: {{ inStockPercentage }}%;" aria-valuenow="{{ inStockPercentage }}" aria-valuemin="0" aria-valuemax="100"></div>
@@ -70,17 +80,17 @@
                 </div>
 
                 <div class="d-flex justify-content-center my-3 text-white">
-                    <span class="badge bg-success rounded-pill">En stock: {{ inStockPercentage | number_format(0) }}%</span>
-                    <span class="badge bg-danger rounded-pill mx-2 mx-md-4 mx-lg-5">Rupture de stock: {{ outOfStockPercentage | number_format(0) }}%</span>
-                    <span class="badge bg-warning rounded-pill">Précommande: {{ preOrderPercentage | number_format(0) }}%</span>
+                    <span class="badge bg-success rounded-pill">{{ "home.available" | trans }}: {{ inStockPercentage | number_format(0) }}%</span>
+                    <span class="badge bg-danger rounded-pill mx-2 mx-md-4 mx-lg-5">{{ "home.out" | trans }}: {{ outOfStockPercentage | number_format(0) }}%</span>
+                    <span class="badge bg-warning rounded-pill">{{ "home.preorder" | trans }}: {{ preOrderPercentage | number_format(0) }}%</span>
                 </div>
 
-                <h2>Montant total des ventes par mois (12 derniers mois)</h2>
+                <h2>{{ "dashboard.totalSales" | trans }}</h2>
                 <table class="table table-striped my-3">
                     <thead class="thead-dark">
                         <tr>
-                            <th>Mois</th>
-                            <th>Profits</th>
+                            <th>{{ "dashboard.month" | trans }}</th>
+                            <th>{{ "dashboard.earnings" | trans }}</th>
                         </tr>
                     </thead>
                     <tbody>
