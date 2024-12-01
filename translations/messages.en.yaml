@@ -126,7 +126,7 @@ cart:
   cancel: Cancel order
   yourOrder: Your order
   totalPrice: Your Total
-  emptyOrder: You currently have no pending order
+  emptyOrder: Your cart is empty
   toOrder: To see your order, you'll need to add a product to your cart, you can use the link below to consult our products
   orderNotFound: Order not found.
   orderIsPending: Order cannot be canceled because it is not Pending.

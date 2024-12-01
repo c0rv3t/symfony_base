@@ -1,6 +1,6 @@
 # Thomas DUCRET Installation
 
-Projet universitaire de Thomas DUCRET datant de fin 2024
+Projet Symfony universitaire de Thomas DUCRET datant de fin 2024 dans le cadre du cours de Programmation avancées S5 BUT3
 
 Voici les commandes pour lancer le projet (il risque d'en manquer quelques unes):
 
@@ -9,6 +9,11 @@ php bin/console make:migration
 php bin/console doctrine:migrations:migrate
 php bin/console doctrine:fixtures:load
 composer install
+composer require --dev doctrine/doctrine-fixtures-bundle
+
+J'ai réalisé ce projet en utilisant un serveur Xampp plutôt que symfony serve
+
+Il est possible que vous rencontriez quelques erreurs de dépendances, par exemple une erreur demandant l'activation de l'extension php_fileinfo ou une autre erreur avec la variable d'environnement "MAILER_DSN", il faudra simplement installer ces derniers pour régler les problèmes.
 
 
 # Symfony 7.1 Boilerplate 

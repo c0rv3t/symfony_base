@@ -126,7 +126,7 @@ cart:
   cancel: Annuler
   yourOrder: Votre commande
   totalPrice: Total à payer
-  emptyOrder: Vous n'avez pas de commande en attente
+  emptyOrder: Votre panier est vide
   toOrder: Pour consulter votre commande, ajouter un produit à votre panier depuis la page ci-dessous
   orderNotFound: Commande non trouvée.
   orderIsPending: Votre commande ne peut pas être annulée car elle n'est pas en attente.
