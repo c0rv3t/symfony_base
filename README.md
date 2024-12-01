@@ -1,3 +1,16 @@
+# Thomas DUCRET Installation
+
+Projet universitaire de Thomas DUCRET datant de fin 2024
+
+Voici les commandes pour lancer le projet (il risque d'en manquer quelques unes):
+
+php bin/console doctrine:database:create
+php bin/console make:migration
+php bin/console doctrine:migrations:migrate
+php bin/console doctrine:fixtures:load
+composer install
+
+
 # Symfony 7.1 Boilerplate 
 
 Attention : Il vous faut PHP 8.2 pour faire fonctionner ce projet si vous avez PHP 8.1 utiliser la branche symfony64 du repository.

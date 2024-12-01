@@ -132,6 +132,6 @@ cart:
   orderIsPending: Votre commande ne peut pas être annulée car elle n'est pas en attente.
   orderCanceled: Votre commande a été annulée avec succès.
   orderUnavailable: Au moins un des produits dans votre panier n'est pas disponible.
-  orderInsufficientStock: Insufficient stock for one or more products.
+  orderInsufficientStock: Le stock est insuffisant pour au moins un produit.
   orderPaid: Achat effectué avec succès!
   orderItemDeleted: Produit supprimé.

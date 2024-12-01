@@ -65,10 +65,8 @@
                         {% endif %}
                         {% if is_granted('ROLE_ADMIN') %}
                             <div class="card-img-overlay">
-                                {% if is_granted('ROLE_ADMIN') %}
-                                    <a class="btn-sm btn-warning rounded-pill" href="{{ path('product_edit', { id: product.id }) }}">{{ 'product.edit' | trans }}</a>
-                                    <a class="btn-sm btn-danger rounded-pill" onclick="deleteProduct({{ product.id }}, `{{ product.name }}`, '{{ csrf_token('delete' ~ product.id) }}')">{{ 'product.delete' | trans }}</a>
-                                {% endif %}
+                                <a class="btn-sm btn-warning rounded-pill" href="{{ path('product_edit', { id: product.id }) }}">{{ 'product.edit' | trans }}</a>
+                                <a class="btn-sm btn-danger rounded-pill" onclick="deleteProduct({{ product.id }}, `{{ product.name }}`, '{{ csrf_token('delete' ~ product.id) }}')">{{ 'product.delete' | trans }}</a>
                             </div>
                         {% endif %}
                     </div>
