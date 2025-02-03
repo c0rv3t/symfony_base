@@ -187,11 +187,25 @@ class ProductController extends AbstractController
     public function detail($id, ProductRepository $productRepository, Request $request, Security $security, OrderRepository $orderRepository, EntityManagerInterface $entityManager, LocaleSwitcher $localeSwitcher): Response {
         $locale = $request->getSession()->get('_locale', 'en');
         $localeSwitcher->setLocale($locale);
+        $user = $security->getUser();
 
         $product = $productRepository->find($id);
 
         if (!$product) {
             throw $this->createNotFoundException('Product not found.');
+        }
+
+        $order = $orderRepository->findOneBy(['user' => $user, 'status' => OrderStatus::Pending]);
+
+        if (!$order) {
+            $order = new Order();
+            $order->setUser($user);
+            $order->setStatus(OrderStatus::Pending);
+            $order->setCreatedAt(new \DateTime());
+            $order->setReference('ORD-' . str_pad($orderRepository->count([]) + 1, 3, '0', STR_PAD_LEFT));
+    
+            $entityManager->persist($order);
+            $entityManager->flush();
         }
 
         $user = $security->getUser();
